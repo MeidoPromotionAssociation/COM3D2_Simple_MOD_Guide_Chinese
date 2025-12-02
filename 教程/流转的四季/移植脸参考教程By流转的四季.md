@@ -4,7 +4,7 @@
 
 四季老师使用的 Blender 2.83 的 CM3D2 Converter 转换插件是 2021.03.20b 这个版本：[https://github.com/luvoid/Blender-CM3D2-Converter/releases/tag/luv.2021.03.20](https://github.com/luvoid/Blender-CM3D2-Converter/releases/tag/luv.2021.03.20)
 
-四季老师提供的参考脸模：[https://github.com/90135/COM3D2_Simple_MOD_Guide_Chinese/tree/main/%E7%B4%A0%E6%9D%90%E5%8C%85](https://github.com/90135/COM3D2_Simple_MOD_Guide_Chinese/tree/main/%E7%B4%A0%E6%9D%90%E5%8C%85)
+四季老师提供的参考脸模：[【VRC】Lazuli(移植脸+发+尾+头饰)]([https://github.com/90135/COM3D2_Simple_MOD_Guide_Chinese/tree/main/%E7%B4%A0%E6%9D%90%E5%8C%85](https://pan.quark.cn/s/66d915e5928d))
 
 四季老师的 QQ 群：201067330
 
@@ -221,7 +221,6 @@ F6 插件中的每个选项都对应了一个形态键，这些基础形态键�
 - 目口閉じ——（闭目养神）闭上眼睛
 - ウインク照れ——（左闭右睁地眨眼睛）抛媚眼（wink~）
 - にっこり照れ——同にっこり，（闭眼闭嘴）甜甜的笑
--
 
 #### **舞蹈表情**
 
@@ -308,18 +307,10 @@ F6 插件中的每个选项都对应了一个形态键，这些基础形态键�
 
 #### **其他表情**(不用管)
 
-- 追加よだれ——追加口水
-- 頬 x 涙 x よだれ——脸红、眼泪、口水的组合
-- デフォ——默认
-- エラー——error——错误？？（menu里是100%holo2）
-- n
-- a
-- i
-
-- PS：还记得我们保留的待移植模型自带的表情吗？它们也是由形态键控制的，且最后可能还有许多其他没用到的形态键，尤其是VRC模型，他们虽然不是Com的基础形态键无法在场景中被自动调用。我们依然可以通过插件 **[Shapekey Master](https://github.com/krypto5863/COM3D2.ShapekeyMaster)** 进行调用
-- ![20250501201456](https://github.com/user-attachments/assets/037fddaa-eb41-42f8-b989-6099e88a4b3b)
-- 但相对的，留有大量形态键会导致 model 文件体积急剧增大，并增加运行负担，因此多余形态键请酌情保留，若选择完全不要则文章开头提到的自带表情部分也可删除。
-
+备注：mayueditin跟mayueditout似乎不会被读取，需要改成除此以外的名字
+备注2：口交、舔舐等动作会同时调用moutha与tangout/tangup而不是特定的表情，如果模型自带的舌头形态键会张嘴，叠加一起会导致嘴特别大，最好的做法是将该形态键拆开成tangout/tangup与moutha两部分
+备注3：虽说mouthfera是口交，但如果口交相关表情里没用到moutha形态键，会自动调用moutha，导致嘴巴异常变大，因此做口交、舔舐相关表情时最好用moutha而不是mouthfera
+备注4：有些动作会同时调用hoho/hohos/hohol/hoho2其中几个，如果同一网格被多次授予该系列形态键会导致红晕在脸上飘起，可以考虑将网格复制成4份并分别命名
 
 ## 导出相关
 
@@ -340,7 +331,7 @@ F6 插件中的每个选项都对应了一个形态键，这些基础形态键�
 
 ## 一些进阶知识
 
-对于一些精灵耳的脸模制作，若也想为其添加摇曳(yure)效果，将原模型对应的耳骨跟准心骨嫁接到脸模的 Bone_center 骨上，将除了准心骨之外的骨骼名称后缀加上 _yure_
+- 对于一些精灵耳的脸模制作，若也想为其添加摇曳(yure)效果，将原模型对应的耳骨跟准心骨嫁接到脸模的 Bone_center 骨上，将除了准心骨之外的骨骼名称后缀加上 _yure_
 
 ![20250412201028.jpg](./assets/20250412201028_1744460015338_0.jpg)
 
@@ -349,4 +340,8 @@ F6 插件中的每个选项都对应了一个形态键，这些基础形态键�
 ![20250412201239.jpg](./assets/20250412201239_1744459998347_0.jpg)
 
 ![20250412201401.jpg](./assets/20250412201401_1744460057182_0.jpg)
+
+- 还记得我们保留的待移植模型自带的表情吗？它们也是由形态键控制的，且最后可能还有许多其他没用到的形态键，尤其是VRC模型，他们虽然不是Com的基础形态键无法在场景中被自动调用。我们依然可以通过插件 **[Shapekey Master](https://github.com/krypto5863/COM3D2.ShapekeyMaster)** 进行调用
+- ![20250501201456](https://github.com/user-attachments/assets/037fddaa-eb41-42f8-b989-6099e88a4b3b)
+- 但相对的，留有大量形态键会导致 model 文件体积急剧增大，并增加运行负担，因此多余形态键请酌情保留，若选择完全不要则文章开头提到的自带表情部分也可删除。
 
