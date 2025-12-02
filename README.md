@@ -75,6 +75,8 @@ https://github.com/MeidoPromotionAssociation/MeidoSerialization
 https://drive.google.com/file/d/1ShCt2J2TxHheTbLYIzdowTGaA0AtLdY6
 https://docs.google.com/document/d/1ynhUG_JwypWVQejG_p7DfHfGhAnioQKnhf21K_jMNaQ
 https://docs.google.com/document/d/15MvjRXnqEFcPf2f2Ts5uBq-TuMj7usWfuAlcdaMUdIY
+https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files
+https://github.com/Pain-Brioche/COM3D2.MaidLoader
 ```
 
 
