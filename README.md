@@ -58,7 +58,7 @@ These documents are open source, and you are welcome to submit translations
 
 ## AI工具
 
-您可以尝试使用 Google 推出的 [NotebookLM](https://notebooklm.google/) 来向本仓库内的内容提问。
+您可以尝试使用 Google 推出的 [NotebookLM](https://notebooklm.google/) 来向 AI 提问。
 
 打开 NotebookLM 后，添加以下网站作为资料来源，然后您就可以询问 AI 一些关于制作 MOD 的问题。
 
@@ -70,15 +70,18 @@ https://seesaawiki.jp/com3d2mod_wiki/
 https://seesaawiki.jp/com3d2_kaizou_info/
 https://github.com/luvoid/COM3D2-All-Bout-Bones
 https://github.com/luvoid/Blender-CM3D2-Converter
-https://github.com/90135/COM3D2_MOD_EDITOR
+https://github.com/MeidoPromotionAssociation/COM3D2_MOD_EDITOR
 https://github.com/MeidoPromotionAssociation/MeidoSerialization
 https://drive.google.com/file/d/1ShCt2J2TxHheTbLYIzdowTGaA0AtLdY6
 https://docs.google.com/document/d/1ynhUG_JwypWVQejG_p7DfHfGhAnioQKnhf21K_jMNaQ
 https://docs.google.com/document/d/15MvjRXnqEFcPf2f2Ts5uBq-TuMj7usWfuAlcdaMUdIY
 https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files
 https://github.com/Pain-Brioche/COM3D2.MaidLoader
+https://github.com/AbsoluteOmega/How-to-port-character-model-to-COM3D2
+https://bdffzi-blog.netlify.app/posts/2633666094
 ```
 
+<br>
 
 ## 目录及说明
 
@@ -382,8 +385,7 @@ Blender 是一个开源的建模软件
 ## 也可以看看其他仓库
 
 - [COM3D2 中文 MOD 教程](https://github.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese)
-- [COM3D2 MOD 编辑器](https://github.com/90135/COM3D2_MOD_EDITOR)
-- [COM3D2 插件中文翻译](https://github.com/90135/COM3D2_Plugin_Translate_Chinese)
+- [COM3D2 MOD 编辑器](https://github.com/MeidoPromotionAssociation/COM3D2_MOD_EDITOR)
 - [90135 的 COM3D2 中文指北](https://github.com/90135/COM3D2_GUIDE_CHINESE)
 - [90135 的 COM3D2 脚本收藏集](https://github.com/90135/COM3D2_Scripts_901)
 - [90135 的 COM3D2 工具](https://github.com/90135/COM3D2_Tools_901)
