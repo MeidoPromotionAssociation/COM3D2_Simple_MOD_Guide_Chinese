@@ -56,6 +56,27 @@ These documents are open source, and you are welcome to submit translations
 
 <br>
 
+## AI工具
+
+您可以尝试使用 Google 推出的 [NotebookLM](https://notebooklm.google/) 来向本仓库内的内容提问。
+
+打开 NotebookLM 后，添加以下网站作为资料来源，然后您就可以询问 AI 一些关于制作 MOD 的问题。
+
+AI 提供的内容未必准确，因此请自行辨别回答内容。
+
+```
+https://github.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese
+https://seesaawiki.jp/com3d2mod_wiki/
+https://seesaawiki.jp/com3d2_kaizou_info/
+https://github.com/luvoid/COM3D2-All-Bout-Bones
+https://github.com/luvoid/Blender-CM3D2-Converter
+https://github.com/90135/COM3D2_MOD_EDITOR
+https://github.com/MeidoPromotionAssociation/MeidoSerialization
+https://drive.google.com/file/d/1ShCt2J2TxHheTbLYIzdowTGaA0AtLdY6
+https://docs.google.com/document/d/1ynhUG_JwypWVQejG_p7DfHfGhAnioQKnhf21K_jMNaQ
+https://docs.google.com/document/d/15MvjRXnqEFcPf2f2Ts5uBq-TuMj7usWfuAlcdaMUdIY
+```
+
 
 ## 目录及说明
 
