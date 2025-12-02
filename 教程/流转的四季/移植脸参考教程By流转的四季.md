@@ -4,7 +4,7 @@
 
 四季老师使用的 Blender 2.83 的 CM3D2 Converter 转换插件是 2021.03.20b 这个版本：[https://github.com/luvoid/Blender-CM3D2-Converter/releases/tag/luv.2021.03.20](https://github.com/luvoid/Blender-CM3D2-Converter/releases/tag/luv.2021.03.20)
 
-四季老师提供的参考脸模：[【VRC】Lazuli(移植脸+发+尾+头饰)]([https://github.com/90135/COM3D2_Simple_MOD_Guide_Chinese/tree/main/%E7%B4%A0%E6%9D%90%E5%8C%85](https://pan.quark.cn/s/66d915e5928d))
+四季老师提供的参考脸模：[【VRC】Lazuli(移植脸+发+尾+头饰)](https://pan.quark.cn/s/66d915e5928d)
 
 四季老师的 QQ 群：201067330
 
