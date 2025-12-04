@@ -257,16 +257,18 @@ MaidLoader 有一个 QuickMod 功能，可以在文件被修改时重新创建 a
 
 随着官方的支持和 Modloader、MaidLoader 的出现，我们可以直接以官方物品的格式来加载物品，因此官方有什么功能，我们就可以使用什么功能。
 
-<br>
-所以我们需要一些工具来读写这些文件，在目录的 English Modding Tools Pack 里面的 Core Modding Tools (English)，有各种工具
 
 #### menu
 
-用工具转成 txt 或用编辑器打开 .menu
+用编辑器打开 .menu 文件
 
 这里用我自己做的 menu 编辑器打开，本来我都是用某 D 的工具，但是他禁止外国人使用，不好分发。
 
 为了大家有相对好用的工具，只好自己做了
+
+请到这里下载：[https://github.com/90135/COM3D2_MOD_EDITOR](https://github.com/90135/COM3D2_MOD_EDITOR)
+
+下面的图片是 V1 版本的，现在的界面已经不长这样了，但格式是一样的，理解就好。
 
 ![图片](https://github.com/user-attachments/assets/fc89861f-debb-47e4-bb63-54e443bf35e6)
 
