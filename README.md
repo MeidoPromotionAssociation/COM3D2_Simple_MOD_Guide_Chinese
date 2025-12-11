@@ -381,6 +381,9 @@ Blender 是一个开源的建模软件
  - [BDFFZI教程-视频](https://www.bilibili.com/video/BV148411i7uy/)
  - [zoobot移植教程备份-图文（英文/不完整）](https://github.com/AbsoluteOmega/How-to-port-character-model-to-COM3D2)
  - [DA教程-图文（图片简介中有网盘）](https://www.pixiv.net/artworks/105077558)
+ - [Amateur’s Modding Guide To COM Redux: Chapter 1（英文）](https://docs.google.com/document/d/1ynhUG_JwypWVQejG_p7DfHfGhAnioQKnhf21K_jMNaQ)
+ - [Amateur’s Modding Guide To COM Redux: Chapter 2（英文）](https://docs.google.com/document/d/15MvjRXnqEFcPf2f2Ts5uBq-TuMj7usWfuAlcdaMUdIY)
+ - [An Amateur's Guide to Making CM3D2 Mods - PDF v.2](https://drive.google.com/file/d/1ShCt2J2TxHheTbLYIzdowTGaA0AtLdY6)
 
 ## 也可以看看其他仓库
 
