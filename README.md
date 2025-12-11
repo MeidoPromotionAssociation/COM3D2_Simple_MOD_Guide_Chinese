@@ -58,17 +58,25 @@ These documents are open source, and you are welcome to submit translations
 
 ## AI工具
 
-您可以尝试使用 Google 推出的 [NotebookLM](https://notebooklm.google/) 来向 AI 提问。
+您可以尝试使用 Google 推出的 [NotebookLM](https://notebooklm.google/) 来向 AI 提问，此 AI 会使用资料来源内的知识来回答。
 
-打开 NotebookLM 后，添加以下网站作为资料来源，然后您就可以询问 AI 一些关于制作 MOD 的问题。
+打开 NotebookLM 后，添加下面的网站作为资料来源，然后您就可以询问 AI 一些关于制作 MOD 的问题。
+
+请注意：NotebookLM 并不会读取整个网站，只会读取当前链接的内容的文字，因此多个页面需要单独添加。
 
 AI 提供的内容未必准确，因此请自行辨别回答内容。
 
+您可以尝试这些此创建好的笔记本，它们的资料来源略有不同：
+ - [https://notebooklm.google.com/notebook/f3b7e545-79b3-4f9c-b0da-233cd764aeb3](https://notebooklm.google.com/notebook/f3b7e545-79b3-4f9c-b0da-233cd764aeb3)
+ - [https://notebooklm.google.com/notebook/b754d9ff-7bf2-4925-9915-2bc4405d09eb](https://notebooklm.google.com/notebook/b754d9ff-7bf2-4925-9915-2bc4405d09eb)
+ - [https://notebooklm.google.com/notebook/428d914f-2b64-4b13-a053-21c98ef5b136](https://notebooklm.google.com/notebook/428d914f-2b64-4b13-a053-21c98ef5b136)
+
+<details>
+
+<summary>资料来源</summary>
+
 ```
 https://github.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese
-https://seesaawiki.jp/com3d2mod_wiki/
-https://seesaawiki.jp/com3d2_kaizou_info/
-https://github.com/luvoid/COM3D2-All-Bout-Bones
 https://github.com/luvoid/Blender-CM3D2-Converter
 https://github.com/MeidoPromotionAssociation/COM3D2_MOD_EDITOR
 https://github.com/MeidoPromotionAssociation/MeidoSerialization
@@ -76,10 +84,27 @@ https://drive.google.com/file/d/1ShCt2J2TxHheTbLYIzdowTGaA0AtLdY6
 https://docs.google.com/document/d/1ynhUG_JwypWVQejG_p7DfHfGhAnioQKnhf21K_jMNaQ
 https://docs.google.com/document/d/15MvjRXnqEFcPf2f2Ts5uBq-TuMj7usWfuAlcdaMUdIY
 https://github.com/Neerhom/COM3D2.ModLoader/wiki/Creating-.asset_bg-files
-https://github.com/Pain-Brioche/COM3D2.MaidLoader
-https://github.com/AbsoluteOmega/How-to-port-character-model-to-COM3D2
-https://bdffzi-blog.netlify.app/posts/2633666094
+https://seesaawiki.jp/com3d2mod_wiki/d/mate
+https://seesaawiki.jp/com3d2mod_wiki/d/menu
+https://seesaawiki.jp/com3d2mod_wiki/d/model
+https://seesaawiki.jp/com3d2mod_wiki/d/tex
+https://seesaawiki.jp/com3d2mod_wiki/d/pmat
+https://seesaawiki.jp/com3d2mod_wiki/d/%a5%ab%a5%c6%a5%b4%a5%ea
+https://seesaawiki.jp/com3d2mod_wiki/d/Blender%20Tips
+https://seesaawiki.jp/com3d2mod_wiki/d/COM%a4%ce%ca%d1%b9%b9%b2%d5%bd%ea
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC1%E8%AF%BE--MOD%E7%9A%84%E7%BB%84%E6%88%90%E5%92%8C%E4%BD%BF%E7%94%A8AccEX%E6%8F%92%E4%BB%B6%E5%88%B6%E4%BD%9C%E7%AE%80%E6%98%93%E6%8D%A2%E8%89%B2.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC2%E8%AF%BE--%E5%88%9D%E6%AC%A1%E4%BF%AE%E6%94%B9%E6%A8%A1%E5%9E%8B%E4%B9%8B%E7%AE%80%E6%98%93%E4%BF%AE%E6%94%B9%E8%A2%9C%E5%AD%90%E7%A9%BF%E6%A8%A1.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC3%E8%AF%BE--%E7%A7%BB%E6%A4%8D%E5%B0%8F%E7%89%A9%E4%BB%B6%E4%B9%8B%E7%89%B9%E5%AE%9A%E4%BA%8E%E5%A6%B9%E6%8A%96%E7%9A%84%E4%B8%9C%E8%A5%BF.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC4%E8%AF%BE--%E7%94%A8%E5%BD%A2%E6%80%81%E9%94%AE%E6%88%96anm%E8%AE%A9%E7%89%A9%E5%93%81%E5%8A%A8%E8%B5%B7%E6%9D%A5.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC5%E8%AF%BE--%E5%81%9A%E4%B8%80%E5%8F%8CHighHell%E6%8F%92%E4%BB%B6%E9%AB%98%E8%B7%9F%E9%9E%8B.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/90135/90135%E7%9A%84COM3D2%E7%AE%80%E6%98%8EMOD%E6%95%99%E7%A8%8B/%E7%AC%AC6%E8%AF%BE--%E4%BD%BF%E7%94%A8%E6%91%87%E6%9B%B3%E9%AA%A8%E8%AE%A9%E7%89%A9%E4%BD%93%E6%9C%89%E7%89%A9%E7%90%86%E6%95%88%E6%9E%9C.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/ymk/ymk%E7%A7%BB%E6%A4%8D%E6%95%99%E7%A8%8B/Chapter1%20%E7%AE%80%E4%BB%8B%26Fb%E9%85%8D%E4%BB%B6/Chapter1%20%E7%AE%80%E4%BB%8B%26Fb%E9%85%8D%E4%BB%B6.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/ymk/ymk%E7%A7%BB%E6%A4%8D%E6%95%99%E7%A8%8B/Chapter2%20%E5%A4%B4%E5%8F%91/Chapter2%20%E5%A4%B4%E5%8F%91.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/ymk/ymk%E7%A7%BB%E6%A4%8D%E6%95%99%E7%A8%8B/Chapter3%20%E6%9C%8D%E8%A3%85/Chapter3%20%E6%9C%8D%E8%A3%85.md
+https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Guide_Chinese/refs/heads/main/%E6%95%99%E7%A8%8B/ymk/ymk%E7%A7%BB%E6%A4%8D%E6%95%99%E7%A8%8B/Chapter4%20mate%E4%B8%8E%E5%85%B6%E4%BB%96/Chapter4%20mate%E4%B8%8E%E5%85%B6%E4%BB%96.md
 ```
+
+</details>
 
 <br>
 
