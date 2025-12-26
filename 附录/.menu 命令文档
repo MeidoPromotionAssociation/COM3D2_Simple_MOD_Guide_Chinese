@@ -1,0 +1,669 @@
+# COM3D2 `.menu` 命令文档
+
+分析源自 COM3D2 2.47.0 源代码，由 GPT-5.2 X-High Thinking 生成基础。
+
+本文档用于解释 `.menu` 在编辑器里显示的“命令”各自是什么意思、该怎么写。
+
+- **运行时生效**：会实际改变人物外观/状态。
+- **仅菜单显示**：主要给编辑器/菜单数据库读取（名字、说明、图标、排序等），不一定会直接改变人物。
+
+ ---
+
+## 1) 基础语法规则和注意事项
+
+- **命令名不区分大小写**：`TEX`/`tex` 等价。
+- **参数用空格分隔**；若参数里有空格，用英文双引号 `"..."` 包住。
+- **注释行**：一行（去掉开头空白后）以 `/` 开头会被忽略。
+
+一般情况下，每个 menu 必须有 `name` 和 `setumei` 命令，且必须填写参数，否则游戏容易报错， COM3D2 MOD EDITOR V2 会在此命令缺少参数时提示。
+```
+name
+    321
+
+setumei
+    123
+```
+
+---
+
+## 2) 术语解释
+
+- **槽位（Slot / SlotName）**：人物身上“模型装在哪个位置”的名字，例如 `wear`（上衣）、`skirt`（裙子）、`head`（头），可选值查看附录。
+- **类别（category / MPN）**：菜单脚本内部的“当前目标部位”。很多命令默认作用在最近一次 `category` 指定的目标上，可选值查看附录。
+    - 绝大多数情况下：`category` 的值和槽位名相同（例如 `wear`、`skirt`）。
+    - 少数情况：`category skin` / `category haircolor` 主要用于颜色/皮肤相关逻辑，本身不是一个可 `additem` 的槽位。
+- **材质号（MatNo）**：同一个模型可能有多套材质（材质列表），`MatNo` 从 `0` 开始编号，表示“改第几个材质”。
+- **属性名（Property / Prop）**：材质上的字段名（多以 `_` 开头），例如 `_MainTex`、`_ShadowTex`、`_ToonRamp`、`_OutlineTex`。
+- **SlotID**：槽位的枚举名（本质也是槽位名），常用于 `anime`/`toelock`/`cutout消去cc` 等命令，可选值查看附录。
+
+---
+
+## 2) 树形视角（你在编辑器里会看到的样子）
+
+
+![图片](https://github.com/user-attachments/assets/e7b9854d-a662-4dc1-82cf-6a796c081283)
+
+
+---
+
+
+## 3) 命令行语法
+
+本文描述命令时使用了一些命令行语法，这里是你需要了解的符号含义：
+
+- 尖括号  `< >`  表示里面的元素（参数、值或信息等）是必需的。您需要用相应的信息来替换尖括号里面的文本（有时括号中的就是要输入的内容）。不要将尖括号本身也输入到命令中。
+- 方括号  `[ ]`  表示里面的元素（参数、值或信息等）是可选的。您可以输入一个或多个，也可以不输入。不要将方括号本身也输入到命令中。您需要用相应的信息来替换方括号里面的文本（有时括号中的就是要输入的内容）
+
+例如这个命令：
+- `additem <模型> <SlotName>`：把模型装到槽位。
+
+在编辑器的树型模式内应该写为：
+
+```
+additem 
+  foo.model 
+  wear
+```
+
+在编辑器的TSV模式内应该写为：
+```
+additem foo.model wear
+```
+
+---
+
+## 4) 命令速查（按功能分组）
+
+### A. 控制流/条件（运行时生效）
+
+- `end`：结束解析。
+- `#if isplugin in A&B&...` / `#else` / `#endif`：按“插件是否启用”跳过一段命令。
+- `if maidprop[MPN] == nothing ? setprop[MPN] = VALUE`：当某部位没装备时，给另一个部位设默认值。
+- `if slot[SLOT].ver < N ? skip`：当槽位版本不足时，跳过整个菜单。
+
+### B. 物品信息/菜单显示（仅菜单显示为主）
+
+- `name <显示名>`：菜单里显示的物品名。
+- `setumei <说明>`：说明文字（常见用 `《改行》` 表示换行）。
+- `icon <文件>` / `icons <文件>`：菜单图标。
+- `saveitem <保存名>`：保存/识别用名称（运行时基本不影响外观）。
+- `priority <数字>`：菜单排序优先级。
+- `メニューフォルダ man`：标记为男用（常用于菜单分类/筛选）。
+- `collabo`：标记为联动内容。
+- `unsetitem`：标记“仅用于卸下/删除”的菜单项。
+- `color_set <MPN> [MenuNameInColorSet]`：颜色套用相关（编辑器侧会读）。
+- `catno <数字>` / `iconl` / `setstr`：部分场景会出现，很多情况下可视为占位或被忽略。
+
+### C. 上下文/目标选择
+
+- `category <类别/MPN>`：设置“当前目标部位”。很多命令默认作用于这里。
+    - 特殊：`category skin`、`category haircolor` 会影响 `tex` 的一些自动处理。
+- `ver <SlotName> <版本号>`：设置后续 `additem` 使用的版本号。
+
+### D. 装卸模型/遮罩/节点显示（运行时生效）
+
+- `additem <模型> <SlotName>`：把模型装到槽位。
+- `additem <模型> <SlotName> ボーンにアタッチ <骨骼名>`：装到槽位并挂到指定骨骼。
+- `additem <模型> <SlotName> アタッチ <目标槽位> <挂点名>`：装到槽位并挂到挂点。
+- `delitem` / `delitem <SlotName>`：卸下（默认卸“当前 category 对应槽位”）。
+- `maskitem <MaskSlotName>`：给“当前槽位”追加一个遮罩槽位。
+- `nofloory <SlotID>`：关闭该槽位的贴地/碰地处理。
+- `node消去 <节点名>` / `node表示 <节点名>`：隐藏/显示节点（**名称包含匹配**）。
+    - 当 `<节点名>` 为 `_ALL_` 时：会对该槽位的所有节点生效（相当于全选）。
+    - 匹配规则是“包含”：例如写 `node消去 yure` 会影响所有名字里带 `yure` 的节点。
+- `パーツnode消去 <TargetSlot> <节点名>` / `パーツnode表示 <TargetSlot> <节点名>`：按目标槽位保存一套节点显隐规则。
+    - 这个命令有 2 个槽位概念：
+        - `category` 指定的“当前槽位”= 规则的保存者
+        - `<TargetSlot>` = 规则的目标（对哪个槽位生效）
+- `cutout消去cc <SlotID> <遮罩贴图> [maid]`：对身体添加裁剪遮罩（常用于避免穿模）。
+    - 第 3 参数可省略；如果写了第 3 参数，则必须是 `maid`（不区分大小写），否则该命令会被跳过（不生效）。
+
+### E. 贴图/材质/颜色/Shader（运行时生效）
+
+- `color <SlotName> <MatNo> <Property> <R> <G> <B> <A>`：设置材质颜色（0~255）。
+- `mancolor <R> <G> <B>`：设置男性颜色（0~255）。
+- `tex <SlotName> <MatNo或映射> <Property> <TexFile> [PARTS_COLOR_ID]`：换贴图。
+    - `TexFile` 含 `*` 时：`*` 会替换成该槽位模型名（不含扩展名）。
+    - `<MatNo或映射>` 两种写法：
+        - 直接写数字：`0` / `1` / `2`...
+        - 写“按部位映射”：`MPN=MatNo&MPN=MatNo...`（游戏会按当前菜单所属部位选择对应数字）
+    - 注意：`tex` 会同时清掉同槽位/同材质/同属性上已有的“贴图合成层”。
+- `テクスチャ合成 <SlotName> <MatNo> <Property> <LayerNo> <TexFile> <BlendMode>`：贴图叠加层。
+    - `LayerNo`：图层编号（整数）。数字越小越靠下（先合成），数字越大越靠上（后合成）。
+    - `BlendMode`：混合模式。常用：`Alpha`、`Multiply`；可用值：`Alpha` / `Multiply` / `InfinityColor` / `TexTo8bitTex`。
+- `テクスチャセット合成 <SlotName> <MatNo> <Property> <LayerNo> <TexFile> <BlendMode>`：贴图叠加层（集合模式）。
+    - 一般写法与 `テクスチャ合成` 相同；不确定时优先照抄你参考的官方/现成菜单文件。
+- `マテリアル変更 <SlotName> <MatNo> <MaterialFile>`：整体替换材质。
+- `shader <SlotName> <MatNo> <ShaderName>`：切换 Shader。
+- `テクスチャ乗算 ...`：本版本运行时基本不处理（占位）。
+
+### F. 参数/记录/用户编辑（运行时生效）
+
+- `アイテムパラメータ <SlotName> <Key> <Value>`：给槽位写入自定义参数（常用于条件判断）。
+- `param2 <SlotName> <Key> <Value>`：第二套参数表。
+- `commenttype <Key> <Value>`：写入状态字典（标记/注释用途）。
+- `useredit <Label> material <DestSlot> <MatNo> <Prop> <Type> <Value>`：设置材质属性。
+    - `<Label>`：更像“显示用标题/标签”，运行时基本不参与计算。
+        - 例外：当 `<Label>` 恰好是 `眉毛の描画順` 时，属性名会被强制改为 `_ZTest2`。
+    - `<DestSlot>`：要修改哪个槽位的材质；通常请把它写成与 `category` 相同的槽位名。
+    - `Type=DEFINE`：`Value` 为 `0/1`（关键字开关）
+    - `Type=Color`：`Value` 为 `r:g:b:a`（一般 0~1 小数）
+    - 其他：当作浮点数
+    - 重要：该命令在解析时 **不会把值写入存档**（更像“给材质一个默认值”）。如果玩家/系统已有保存过的材质设置，保存值会优先生效。
+
+### G. 形变/挂点/动画（运行时生效）
+
+- `アタッチポイントの設定 <Name> <x> <y> <z> <rx> <ry> <rz>`：设置挂点位置/角度（作用于“最近一次 additem 的槽位”）。
+- `bonemorph <Prop> <Bone> <minX> <minY> <minZ> <maxX> <maxY> <maxZ>`：骨骼形变范围（默认 pos）。
+- `bonemorph pos|rot|scl <Prop> <Bone> <min...> <max...>`：指定形变类型。
+- `length <SlotName> <Group> <SearchType> <BonePattern> <minX> <minY> <minZ> <maxX> <maxY> <maxZ>`：头发长度控制组。
+- `blendset <SetName> <Morph1> <Value1> <Morph2> <Value2> ...`：表情/形态权重集合。
+- `paramset <SetName> <Weight1> <String1> <Weight2> <String2> ...`：登记一组“脸部参数集合”。
+    - 参数是成对出现：`Weight` 是浮点数，`String` 是一个字符串。
+    - 该集合会保存到脸部内部的“参数集合表”里；本版本主要运行逻辑中未发现它被直接读取（更像是给 UI/别的系统用）。不确定用途时，不建议自己造，照抄官方/现成菜单更稳。
+- `anime <SlotID> <AnimName> [loop]`：物品动画播放。
+- `animematerial <SlotID> <MatNo>`：材质动画器追加。
+- `toelock <SlotID>`：动画播放时锁定脚趾骨骼旋转。
+
+### H. 资源引用/状态切换（运行时生效）
+
+- `リソース参照 <状态名> <MenuFile>`：登记“状态 → 目标菜单文件”。常用于衣服状态切换（半脱ぎ/めくれ/ずらし等）。
+- `半脱ぎ <MenuFile>`：等价于 `リソース参照 半脱ぎ <MenuFile>`。
+
+### I. 其他/系统属性（不常手写）
+
+- `prop <PropName> <IntValue>`：写入数值属性。
+- `setslotitem <PropName> <UIntId>`：写入数值属性（另一种格式）。
+- `set` / `setname`：本版本运行时基本不处理（占位）。
+- `アイテム <MenuFile>`：临时套用另一套 `.menu`。
+- `アイテム条件 ... なら <MenuFile>`：满足条件时才套用另一套 `.menu`。
+    - 支持的判断写法（与日文原文一致，参数顺序必须对）：
+        - `アイテム条件 <SlotName> に何か 有る なら <MenuFile>`：该槽位有物品时。
+        - `アイテム条件 <SlotName> に何か 無い なら <MenuFile>`：该槽位没物品时。
+        - `アイテム条件 <SlotName> が <ModelFileName> なら <MenuFile>`：该槽位装着指定模型文件名时。
+        - `アイテム条件 <SlotName> のアイテムパラメータの <Key> が <Value> なら <MenuFile>`：用 `アイテムパラメータ` 写入的参数相等时。
+
+---
+
+## 5) 材质号（MatNo）与属性名（Property）怎么取
+
+这是写 `tex` / `color` / `shader` / `useredit material` 时最容易卡住的地方：
+
+- **MatNo 怎么取**
+    - `MatNo` 是从 `0` 开始的顺序号。
+    - 不知道是多少时，最稳妥的方法是：先从 `0` 试起（`0/1/2...`），看哪一个会改变你想改的那块。
+    - 经验上：`body` 的主体皮肤常见是 `0`；`head` 的脸皮常见是 `5`（这也是游戏里对 `SKIN` 的特殊处理点）。
+- **Property 怎么取**
+    - 你写的属性名必须“材质真的存在”。不存在时会报错或无效。
+    - 最稳妥：从官方/现成 `.menu` 里复制（同一个槽位、同一个材质号）。
+    - 常见贴图属性：`_MainTex`、`_ShadowTex`、`_ToonRamp`、`_OutlineTex`、`_OutlineToonRamp`。
+    - 常见颜色属性：`_Color`（是否存在取决于 Shader）。
+
+---
+
+## 6) 高频命令：更容易照抄的示例
+
+以下命令以编辑器树型模式展现
+
+### 6.1 `additem`（装模型）
+
+```
+category 
+    wear
+    
+additem 
+    mywear.model 
+    wear
+```
+
+### 6.2 `tex`（换贴图）
+
+最常见写法（指定槽位、材质号、属性名、文件名）：
+
+```
+tex 
+    wear 
+    0 
+    _MainTex 
+    mywear_diffuse.tex
+```
+
+用 `*` 复用模型名（`*` 会替换成该槽位模型文件名（不含扩展名））：
+
+```
+tex 
+    wear 
+    0 
+    _MainTex 
+    *_diffuse.tex
+```
+
+启用无限色（第 6 参数，示例以头发为例）：
+
+```
+tex 
+    hairF 
+    0 
+    _MainTex 
+    myhair.tex 
+    HAIR
+```
+
+### 7.3 `node消去` / `node表示`（节点显隐）
+
+隐藏所有名字里包含 `yure` 的节点：
+
+```
+category 
+    wear
+
+node消去 
+    yure
+```
+
+恢复全部节点：
+
+```
+category 
+    wear
+    
+node表示 
+    _ALL_
+```
+
+### 6.4 `cutout消去cc`（身体裁剪遮罩）
+
+```
+cutout消去cc 
+    body 
+    mymask.tex
+```
+
+### 6.5 `リソース参照` / `半脱ぎ`（状态切换登记）
+
+在“基础菜单”里登记一个状态到另一套 `.menu`：
+
+```
+リソース参照 
+    半脱ぎ 
+    wear_half.menu
+```
+
+简写：
+
+```
+半脱ぎ 
+    wear_half.menu
+```
+
+### 6.6 `アイテム条件`（满足条件才套用另一套菜单）
+
+检查某槽位“有没有装备任何物品”：
+
+```
+アイテム条件 
+    wear 
+     に何か 
+     有る 
+     なら 
+     wear_has.menu
+     
+アイテム条件 
+    wear 
+    に何か 
+    無い 
+    なら 
+    wear_none.menu
+```
+
+按“槽位模型文件名”判断（必须与该槽位当前 `additem` 的模型文件名一致）：
+
+```
+アイテム条件 
+    wear 
+    が 
+    mywear.model 
+    なら 
+    wear_mywear.menu
+```
+
+配合 `アイテムパラメータ` 做更细判断：
+
+```
+アイテムパラメータ 
+    wear 
+    state 
+    on
+
+
+アイテム条件 
+    wear 
+    のアイテムパラメータの 
+    state 
+    が 
+    on 
+    なら 
+    wear_state_on.menu
+```
+
+### 7.7 `テクスチャ合成` / `テクスチャセット合成`（叠图层/贴纸）
+
+最常见写法（`LayerNo` 越小越靠下）：
+
+```
+テクスチャ合成 
+    body 
+    0 
+    _MainTex 
+    10 
+    sticker.tex 
+    Alpha
+
+
+テクスチャ合成 
+    body 
+    0 
+    _MainTex 
+    20 
+    shadow.tex 
+    Multiply
+```
+
+同一个 `LayerNo` 重复写入时：
+
+- **`テクスチャ合成`**：通常会“覆盖”该图层（后写的顶掉先写的）。
+- **`テクスチャセット合成`**：会把贴图“追加进同一图层”（按写入顺序叠上去）。
+
+补充：如果你在做纹身/痣相关（`category accTatoo` 或 `category hokuro`），游戏对 `テクスチャ合成` 有特殊处理，可能也会变成“追加模式”。不确定时请优先照抄官方/现成菜单的写法。
+
+贴图文件名还支持 `res:` 前缀（从 Resources 读取）：
+
+```
+テクスチャ合成 
+    body 
+    0 
+    _MainTex 
+    10 
+    res:my_sticker 
+    Alpha
+```
+
+### 7.8 `useredit material`（改材质属性）
+
+`Color`（颜色，`r:g:b:a` 通常是 0~1 小数）：
+
+```
+category 
+wear
+
+useredit 
+    "示例：改颜色" 
+    material 
+    wear 
+    0 
+    _Color 
+    Color 
+    1:1:1:1
+```
+
+`DEFINE`（关键字开关，`0/1`）：
+
+```
+category 
+wear
+
+useredit 
+    "示例：关键字" 
+    material 
+    wear 
+    0 
+    SOME_KEYWORD 
+    DEFINE 
+    1
+```
+
+浮点数（类型名写什么都行，只要不是 `DEFINE`/`Color`，都会按浮点数处理；下面用 `Float` 只是习惯写法）：
+
+```
+category 
+    head
+    
+useredit 
+    "示例：数值" 
+    material 
+    head 
+    5 
+    _OutlineWidth 
+    Float 
+    0.02
+```
+
+
+---
+
+
+## `PARTS_COLOR_ID`（给 `tex` 第 6 参数用）
+
+来自于 MaidParts.cs 的 public enum MaidParts.PARTS_COLOR
+
+常见可选值（大小写不敏感）：
+
+- `NONE`
+- `EYE_L`
+- `EYE_R`
+- `HAIR`
+- `EYE_BROW`
+- `UNDER_HAIR`
+- `SKIN`
+- `NIPPLE`
+- `HAIR_OUTLINE`
+- `SKIN_OUTLINE`
+- `EYE_WHITE`
+- `MATSUGE_UP`
+- `MATSUGE_LOW`
+- `FUTAE`
+
+## 常见槽位名（SlotName / SlotID）
+
+来自于 TBody.cs 的 public enum MPN
+
+下面这些名字来自游戏内置槽位列表（大小写不敏感）。你写 `.menu` 时最常用的就是这些：
+
+- `body`
+- `head`
+- `eye`
+- `hairF`
+- `hairR`
+- `hairS`
+- `hairT`
+- `hairAho`
+- `wear`
+- `skirt`
+- `onepiece`
+- `mizugi`
+- `panz`
+- `bra`
+- `stkg`
+- `shoes`
+- `headset`
+- `glove`
+- `accHead`
+- `accHana`
+- `accHa`
+- `accKami_1_`
+- `accKami_2_`
+- `accKami_3_`
+- `accKamiSubR`
+- `accKamiSubL`
+- `accMiMiR`
+- `accMiMiL`
+- `accNipR`
+- `accNipL`
+- `HandItemR`
+- `HandItemL`
+- `accKubi`
+- `accKubiwa`
+- `accHeso`
+- `accUde`
+- `accAshi`
+- `accSenaka`
+- `accShippo`
+- `accAnl`
+- `accVag`
+- `kubiwa`
+- `megane`
+- `accHat`
+- `accXXX`
+- `chinko`
+- `chikubi`
+- `kousoku_upper`
+- `kousoku_lower`
+- `seieki_naka`
+- `seieki_hara`
+- `seieki_face`
+- `seieki_mune`
+- `seieki_hip`
+- `seieki_ude`
+- `seieki_ashi`
+- `underhair`
+- `moza`
+- `end`
+
+
+## 类别（category / MPN）
+
+来自于 MPN.cs 的 public enum MPN
+
+- `null_mpn`
+- `MuneL`
+- `MuneS`
+- `MuneTare`
+- `RegFat`
+- `ArmL`
+- `Hara`
+- `RegMeet`
+- `KubiScl`
+- `UdeScl`
+- `EyeScl`
+- `EyeSclX`
+- `EyeSclY`
+- `EyePosX`
+- `EyePosY`
+- `EyeClose`
+- `EyeBallPosX`
+- `EyeBallPosY`
+- `EyeBallSclX`
+- `EyeBallSclY`
+- `EarNone`
+- `EarElf`
+- `EarRot`
+- `EarScl`
+- `NosePos`
+- `NoseScl`
+- `FaceShape`
+- `FaceShapeSlim`
+- `MayuShapeIn`
+- `MayuShapeOut`
+- `MayuX`
+- `MayuY`
+- `MayuRot`
+- `HeadX`
+- `HeadY`
+- `DouPer`
+- `sintyou`
+- `koshi`
+- `kata`
+- `west`
+- `MuneUpDown`
+- `MuneYori`
+- `MuneYawaraka`
+- `MayuThick`
+- `MayuLong`
+- `Yorime`
+- `MabutaUpIn`
+- `MabutaUpIn2`
+- `MabutaUpMiddle`
+- `MabutaUpOut`
+- `MabutaUpOut2`
+- `MabutaLowIn`
+- `MabutaLowUpMiddle`
+- `MabutaLowUpOut`
+- `body`
+- `moza`
+- `head`
+- `hairf`
+- `hairr`
+- `hairt`
+- `hairs`
+- `hairaho`
+- `haircolor`
+- `skin`
+- `acctatoo`
+- `accnail`
+- `underhair`
+- `hokuro`
+- `mayu`
+- `lip`
+- `eye`
+- `eye_hi`
+- `eye_hi_r`
+- `chikubi`
+- `chikubicolor`
+- `eyewhite`
+- `nose`
+- `facegloss`
+- `matsuge_up`
+- `matsuge_low`
+- `futae`
+- `wear`
+- `skirt`
+- `mizugi`
+- `bra`
+- `panz`
+- `stkg`
+- `shoes`
+- `headset`
+- `glove`
+- `acchead`
+- `accha`
+- `acchana`
+- `acckamisub`
+- `acckami`
+- `accmimi`
+- `accnip`
+- `acckubi`
+- `acckubiwa`
+- `accheso`
+- `accude`
+- `accashi`
+- `accsenaka`
+- `accshippo`
+- `accanl`
+- `accvag`
+- `megane`
+- `accxxx`
+- `handitem`
+- `acchat`
+- `onepiece`
+- `set_maidwear`
+- `set_mywear`
+- `set_underwear`
+- `set_body`
+- `set_head_slider`
+- `folder_eye`
+- `folder_mayu`
+- `folder_underhair`
+- `folder_skin`
+- `folder_eyewhite`
+- `folder_matsuge_up`
+- `folder_matsuge_low`
+- `folder_futae`
+- `kousoku_upper`
+- `kousoku_lower`
+- `seieki_naka`
+- `seieki_hara`
+- `seieki_face`
+- `seieki_mune`
+- `seieki_hip`
+- `seieki_ude`
+- `seieki_ashi`
