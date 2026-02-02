@@ -391,6 +391,7 @@ Blender 是一个开源的建模软件
    - [https://motimoti3d.jp/](https://motimoti3d.jp/)
    - [https://mods.meido.dev/](https://mods.meido.dev/)
    - [https://mukuu.herokuapp.com](https://mukuu.herokuapp.com)
+   - [https://hentaimaids.my1.ru/load/](https://hentaimaids.my1.ru/load/)
 
 ## 其他参考资料
  - [https://seesaawiki.jp/com3d2mod_wiki/](https://seesaawiki.jp/com3d2mod_wiki/)
