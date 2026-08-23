@@ -202,19 +202,26 @@ https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Gu
 Blender 是一个开源的建模软件
 
  - Blender 
-   - 推荐 3.3.21 版本
+   - 按照你使用的插件选择版本，Luv 版推荐 3.3.21 版本，mmtd 版推荐使用 5.2
    - 如果你要编辑 lobody highpoly 体型那种高顶点数模型，用 3.3 太卡的话，可以用 2.39.18，但是会有一些 bug，所以编辑完后要导回 3.3.21 再进行一些处理
    - 3.6 版本也能勉强使用，不过会有一些 BUG，比如有的功能不显示
    - [https://download.blender.org/release/](https://download.blender.org/release/)
    - [https://download.blender.org/release/Blender3.3/blender-3.3.21-windows-x64.zip](https://download.blender.org/release/Blender3.3/blender-3.3.21-windows-x64.zip)
+
+ - mmtd 版 Blender COM3D2 Converter 插件（必备、推荐）
+   - 最新的 Blender 插件，适用最新的 Blender 版本，在 Luv 版本上的基础上添加了很多功能，也进行了完善的测试
+   - 自带 中日韩英 语言（Gemini 翻译）
+   - Blender 5.2 使用 v2026.8.21
+   - 更新说明：[https://github.com/mmt3d/Blender-CM3D2-Converter/blob/bl_33/docs/README.new.md](https://github.com/mmt3d/Blender-CM3D2-Converter/blob/bl_33/docs/README.new.md)
+   - 安装方法：在 Blender 的"获取扩展"的右上角点"储存库"，然后输入 `https://mmt3d.github.io/blender-extensions/index.json`，保存后搜索 `cm3d2` 即可找到
   
- - Blender COM3D2 Converter 插件（必备）
+ - Luv 版 Blender COM3D2 Converter 插件（必备）
    - Blender 2.83 使用 luv.2021.03.20b 或 luv.2021.08.26a
    - Blender 2.93.18 使用 luv.2022.09.16
-   - Blender 3.3.21/3.6 使用最新版 (luv.2023.09.23)
+   - Blender 3.3.21/3.6 使用最新版 (luv.2026.04.19)
    - [https://github.com/luvoid/Blender-CM3D2-Converter/releases](https://github.com/luvoid/Blender-CM3D2-Converter/releases)
 
- - Blender COM3D2 Converter 插件 4.4 版本
+ - vonLeebpl 版 Blender COM3D2 Converter 插件 4.4 版本
    - vonLeebpl 移植的的适用于 Blender 4.4 的版本
    - [https://github.com/vonLeebpl/Blender-CM3D2-Converter](https://github.com/vonLeebpl/Blender-CM3D2-Converter)
 
