@@ -186,7 +186,15 @@ https://raw.githubusercontent.com/MeidoPromotionAssociation/COM3D2_Simple_MOD_Gu
 
  - 90135 编写的全功能 MOD 制作工具 
    - 支持所有 mod 文件格式（.menu、.mate、.pmat、.col、.phy、.psk、.tex、.anm、.model）
-   - [https://github.com/90135/COM3D2_MOD_EDITOR](https://github.com/90135/COM3D2_MOD_EDITOR)
+   - [https://github.com/MeidoPromotionAssociation/COM3D2_MOD_EDITOR](https://github.com/MeidoPromotionAssociation/COM3D2_MOD_EDITOR)
+
+- 90135 编写的 MeidoSerialization CLI
+  - 一个命令行工具，可以转换所有 COM3D2 和 KCES 的文件格式，可以批量
+  - [https://github.com/MeidoPromotionAssociation/MeidoSerialization](https://github.com/MeidoPromotionAssociation/MeidoSerialization)
+
+- 90135 编写的 KCES MOD EDITOR
+  -  支持所有 KCES 文件格式
+  - [https://github.com/MeidoPromotionAssociation/KCES_MOD_EDITOR](https://github.com/MeidoPromotionAssociation/KCES_MOD_EDITOR)
 
  - English Modding Tools Pack 英文改装工具包 2024.2.20 版
    - 内含各种各样的工具，其中最重要的是 SybarisArcEditor.exe
@@ -204,7 +212,8 @@ Blender 是一个开源的建模软件
  - Blender 
    - 按照你使用的插件选择版本，Luv 版推荐 3.3.21 版本，mmtd 版推荐使用 5.2
    - 如果你要编辑 lobody highpoly 体型那种高顶点数模型，用 3.3 太卡的话，可以用 2.39.18，但是会有一些 bug，所以编辑完后要导回 3.3.21 再进行一些处理
-   - 3.6 版本也能勉强使用，不过会有一些 BUG，比如有的功能不显示
+   - Luv 版在 3.6 版本也能勉强使用，不过会有一些 BUG，比如有的功能不显示
+   - 我建议下载 Portal 便携版，解压即用，不需要安装什么的，方便多版本
    - [https://download.blender.org/release/](https://download.blender.org/release/)
    - [https://download.blender.org/release/Blender3.3/blender-3.3.21-windows-x64.zip](https://download.blender.org/release/Blender3.3/blender-3.3.21-windows-x64.zip)
 
@@ -334,7 +343,8 @@ Blender 是一个开源的建模软件
    - [https://uu.getuploader.com/hatena37/download/109](https://uu.getuploader.com/hatena37/download/109)
 
  - 插件汉化
-   - [COM3D2 插件中文翻译](https://github.com/90135/COM3D2_Plugin_Translate_Chinese)
+   - [COM3D2 插件中文翻译](https://huggingface.co/datasets/mollyadams/COM3D2_PLUGIN_CHINESE_TRANSLAT)
+   - [COM3D2 游戏汉化](https://huggingface.co/datasets/mollyadams/COM3D2_CHINESE_TRANSLATE)
 
  - motimoti 博客的插件收集
    - [https://motimoti3d.jp/blog-entry-590.html](https://motimoti3d.jp/blog-entry-590.html)
