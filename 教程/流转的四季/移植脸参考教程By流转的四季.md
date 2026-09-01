@@ -6,6 +6,8 @@
 
 四季老师提供的参考脸模：[【VRC】Lazuli(移植脸+发+尾+头饰)](https://pan.quark.cn/s/66d915e5928d)
 
+2026年9月1日，四季老师将 CM3D2 Converter 和 CM3D2-BoneUtil 移植到了 Blender 4.5，可以在本仓库的素材包内下载。
+
 四季老师的 QQ 群：201067330
 
 ## 提取官方FB脸
