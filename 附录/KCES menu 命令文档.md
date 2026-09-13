@@ -127,41 +127,455 @@ KCES 的 `.menu` 源文件（以及旧版 CM3D2/COM3D2）为纯文本，每行�
 这些命令在菜单编译时被提取为 Menu 对象的属性，不产生运行时命令。
 它们存储在 `Menu` 对象本身的字段中，而非 `commandList`。
 
-| CompileType 名     | Menu 字段                    | 说明             |
-| ------------------ | ---------------------------- | ---------------- |
-| `メニューフォルダ` | (路径前缀)                   | 菜单资源搜索路径 |
-| `name`             | `itemName`                   | 道具显示名称     |
-| `category`         | `categoryText`               | MPN 分类         |
-| `setumei`          | `infoText`                   | 道具说明文本     |
-| `icon`             | `iconFileName`               | 菜单图标         |
-| `icons`            | `iconFileName`               | 菜单图标(多文件) |
-| `unsetitem`        | `isDelete=true`              | 标记为删除菜单   |
-| `priority`         | `priority`                   | 显示优先级       |
-| `color_set`        | `colorSetText`               | 颜色集关联       |
-| `gender`           | `targetBodyType`/`attribute` | 性别限制         |
-| `define`           | `defineTagNames`             | Define 标记      |
-| `ver`              | `partsVer`                   | 格式版本         |
-| `attribute`        | `attribute`                  | 属性标记         |
-| `toelock`          | `toeLockSlotId`              | 脚趾锁定         |
-| `formtex`          | `exportModelFormTextureName` | 形态纹理         |
-| `腹揺れ対応`       | `isHarayureAvailable`        | 腹部摇摆         |
-| `skirt_phys`       | `skirt_phys`                 | 裙子物理版本     |
-| `colicon`          | (colvari 相关)               | 颜色图标         |
-| `colreqdefine`     | (colvari 相关)               | 颜色需要 define  |
-| `colvari`          | `colvariInfo`                | 颜色变化数据     |
-| `colvarifile`      | `colvariFileNameExp`         | 颜色变化文件     |
-| `filter`           | (编辑筛选)                   | 编辑过滤器       |
-| `edit`             | `hideInEdit`                 | 编辑隐藏         |
-| `ネイル合成`       | `preMulTexDatas`             | 预编译指甲       |
-| `タトゥ合成`       | `preMulTexDatas`             | 预编译纹身       |
-| `ほくろ合成`       | `preMulTexDatas`             | 预编译痣         |
-| `そばかす合成`     | `preMulTexDatas`             | 预编译雀斑       |
-| `ひげ合成`         | `preMulTexDatas`             | 预编译胡须       |
-| `しみ合成`         | `preMulTexDatas`             | 预编译斑点       |
-| `しわ合成`         | `preMulTexDatas`             | 预编译皱纹       |
-| `体毛合成`         | `preMulTexDatas`             | 预编译体毛       |
+编译时命令的官方完整列表来自游戏侧枚举 `Menu.Command.CompileType`（`Menu.cs:481-514`），共 31 个。
+KCES 的文本编译逻辑在官方/KCES2_ED 编辑器侧，游戏侧源码不含编译器本体；下文各命令的「填写格式」
+依据游戏侧枚举、字段消费逻辑、旧版导入路径（`CreatePartsMenuFromOldMenu`）与旧版编译器（COM3D2 `ModCompile`）交叉证实。
 
-> **验证状态说明**：游戏侧 `PartsMenuManager.CreatePartsMenuFromOldMenu`（旧版二进制 men 导入路径）可证实的映射有 `icon`/`icons`→`iconFileName`、`priority`、`color_set`→`colorSet`、`gender`（`man_only`→`TargetBodyType.Man`，`butler`→`Attribute.ManReccomend`）、`unsetitem`→`isDelete`，以及旧版路径下 `end`/`if` 会补全为 `endcommand`/`ifcommand`。其余行（`name`、`category`、`filter`、`edit`、`ver`、合成类等）是依据 `Menu` 类的字段（`Menu.cs:370-470`）做的对应推断——真正的文本 `.menu` 编译逻辑在 KCES2_ED 编辑器侧，游戏侧源码不含该编译器。
+### 2.1 编译机制概览
+
+文本 `.menu` 源文件经编辑器编译后装入 `.menuassets`（MessagePack 容器）。编译时对每行命令：
+
+1. 命令名命中 `CompileType` 枚举 → 该行参数被提取为 `Menu` 对象的元数据字段，**不进入 commandList**；
+2. 命令名命中 `Type` 枚举 → 连同参数原样保留为运行时 `commandList`（`PartsMenuManager.cs:115-119`）。
+
+注意 `ネイル合成` 等 8 个合成命令在两个枚举中都存在：
+- 作为 **CompileType**：编译期把完整合成参数预编译为 `Menu.PreMulTexDatas` 存入 `preMulTexDatas` 字典，
+  并且在运行时命令列表里只留下 `hash <ulong>` 引用形式（见 [2.4-D 预编译合成类](#24-各编译时命令详解)）；
+- 作为 **Type**：运行时按 `hash` 查找预编译数据后直接装配到材质（`TBody.cs:2836-2898`），
+  其它写法（直接给纹理参数）会触发 Assert「move to precompile command」。
+
+### 2.2 解析规则（游戏侧源码证实）
+
+- 每行一条命令：`命令名 参数1 参数2 ...`，**空格 / Tab / 全角空格（U+3000）均为分隔符**（`Menu.SplitTextToMenuToken`，`Menu.cs:263-318`）。
+- 参数含空格时用双引号包裹。
+- 以 `/` 开头的行是注释。
+- 命令名经 `ToLower()` 后与枚举成员名匹配，**不区分大小写**（`Menu.GetMenuCommand`，`Menu.cs:229-261`）。
+- 文件名参数会规整化：扩展名为 `.tex`/`.menu`/`.mate`/`.model` 时，去掉路径部分并转小写（`PartsMenuManager.cs:122-131`）。
+- 旧版命令名 `end`/`if` 自动补全为 `endcommand`/`ifcommand`（`PartsMenuManager.cs:109-111`）。
+- 说明文本参数中的 `《改行》` 会转换为换行（`PartsMenuManager.cs:79`，旧格式约定）。
+- 旧版编译器（COM3D2 `ModCompile.CompileMenuScript`，`ModCompile.cs:15-235`）的强制校验可作填写参考：
+  `メニューフォルダ` 缺失会报错；`additem` 要求 3/5/6 个参数；`category` 必须是有效 MPN 名；
+  `アイテムパラメータ` 必须是「槽名 变量名 值」3 参数。KCES 的编辑器实现不同，这些约束不一定 100% 沿用。
+
+### 2.3 编译时命令速查表
+
+按 `CompileType` 枚举声明顺序（`Menu.cs:481-514`）：
+
+| # | CompileType 名     | Menu 字段                    | 填写内容                             | 作用               |
+| :-: | ------------------ | ---------------------------- | ------------------------------------ | ------------------ |
+| 0  | `メニューフォルダ` | (无，仅编译期使用)           | 菜单资源文件夹名                     | 旧版资源定位校验   |
+| 1  | `name`             | `itemName`                   | 任意文本                             | 道具显示名称       |
+| 2  | `category`         | `category`                   | MPN 名                               | 菜单所属分类/槽位  |
+| 3  | `setumei`          | `infoText`                   | 任意文本（可含`《改行》`）           | 道具说明文本       |
+| 4  | `icon`             | `iconFileName`               | 纹理文件名（不含扩展名）             | 菜单图标           |
+| 5  | `icons`            | `iconFileName`               | 纹理文件名（不含扩展名）             | 菜单图标（同 icon）|
+| 6  | `unsetitem`        | `isDelete=true`              | （参数被忽略）                       | 标记为脱除菜单     |
+| 7  | `priority`         | `priority`                   | 整数                                 | 编辑列表排序权重   |
+| 8  | `color_set`        | `colorSet`                   | MPN 名                               | 颜色集关联         |
+| 9  | `gender`           | `targetBodyType`/`attribute` | `man_only` / `butler` 等             | 性别限制           |
+| 10 | `define`           | `defineTagNames`             | DEFINE 标志组合                      | 颜色类 Define 标记 |
+| 11 | `ネイル合成`       | `preMulTexDatas`             | 合成参数（编译期预编译）             | 预编译指甲合成     |
+| 12 | `タトゥ合成`       | `preMulTexDatas`             | 同上                                 | 预编译纹身合成     |
+| 13 | `ほくろ合成`       | `preMulTexDatas`             | 同上                                 | 预编译痣合成       |
+| 14 | `colicon`          | `colvariInfo.iconFileName/iconColor` | 图标或颜色名                  | 颜色变体图标       |
+| 15 | `colreqdefine`     | `colvariInfo.reqDefine`      | DEFINE 名                            | 颜色变体条件       |
+| 16 | `colvari`          | `colvariInfo`                | 颜色变体数据                         | 无限色变体应用数据 |
+| 17 | `colvarifile`      | `colvariFileNameExp`         | 正则表达式                           | 颜色变体菜单模式   |
+| 18 | `そばかす合成`     | `preMulTexDatas`             | 合成参数（编译期预编译）             | 预编译雀斑合成     |
+| 19 | `ver`              | `partsVer`                   | 版本标签                           | KCES1/2 格式分界   |
+| 20 | `filter`           | (编辑筛选)                   | ——                                   | 编辑过滤器         |
+| 21 | `edit`             | `hideInEdit=true`            | （无参数）                           | 编辑器中隐藏       |
+| 22 | `attribute`        | `attribute`                  | Attribute 标志组合                   | 属性标记           |
+| 23 | `ひげ合成`         | `preMulTexDatas`             | 合成参数（编译期预编译）             | 预编译胡须合成     |
+| 24 | `しみ合成`         | `preMulTexDatas`             | 同上                                 | 预编译斑点合成     |
+| 25 | `しわ合成`         | `preMulTexDatas`             | 同上                                 | 预编译皱纹合成     |
+| 26 | `体毛合成`         | `preMulTexDatas`             | 同上                                 | 预编译体毛合成     |
+| 27 | `toelock`          | `toeLockSlotId`              | SlotID 名                            | 脚趾锁定           |
+| 28 | `formtex`          | `exportModelFormTextureName` | 纹理文件名                           | 发型形态导出纹理   |
+| 29 | `腹揺れ対応`       | `isHarayureAvailable`        | （可省略 / `false`）                  | 衣物腹部摇摆       |
+| 30 | `skirt_phys`       | `skirt_phys`                 | 整数                                 | 裙子物理版本       |
+
+> 注意：Menu 对象中还有几个字段**不是**由编译时命令产生：`hairMake`（发型化妆导出流程写入，`ExportKCES.cs:366-375`）、
+> `srcFileHashCRC32`（编译器自动生成源文件 CRC 哈希，推测供编辑器检测源文件变更）、`defineFirst`（游戏侧无任何消费）、
+> `parentId`/`isDiff`（由文件名自动推断：`_z<编号>` 系列为子菜单、`_zurashi`/`_mekure` 为差异菜单，`Menu.cs:320-366`、`PartsMenuManager.cs:153-154,167`）、
+> `id`（`fileName` 的 FNV 哈希，`PartsMenuManager.cs:141`）与 `guid`（同类哈希标识，如 `ExportKCES.cs:375` 用 `AssetManager.GetHashIgnoreCase` 生成）。
+> 旧字段 `isMan`/`isRecommendMan` 已被 `targetBodyType`/`attribute` 取代，游戏侧无消费。
+
+### 2.4 各编译时命令详解
+
+以下按功能分组。每个命令给出填写格式、参数说明与作用（游戏侧消费证据）。
+证据标注：**【证实】**＝游戏侧代码直接可证；**【旧版证实】**＝旧版导入/导出路径可证；**【推断】**＝依据字段结构与类型推测（编译逻辑在编辑器侧，游戏侧无法直接证实）。
+
+#### A. 基础元数据
+
+##### メニューフォルダ — 菜单资源文件夹
+
+```
+メニューフォルダ 文件夹名
+```
+
+| 参数    | 必需 | 说明               |
+| ------- | :--: | ------------------ |
+| args[0] |  ✅  | 菜单资源文件夹名称 |
+
+- **写入字段**：无 —— 不进入 `Menu` 对象的任何字段，仅编译期使用。
+- **作用**：声明本菜单所挂载的资源文件夹（CM3D2 Mod 目录结构约定）。旧版编译器用它做必填校验并参与资源定位
+  （`ModCompile.cs:68-71`；缺失时报错并回退到菜单文件上两级的目录名，`ModCompile.cs:168-172`）。【旧版证实】
+- 旧版导入路径读到该命令后按 CompileType 提取但完全不使用（`PartsMenuManager.cs:117`），说明编译产物中不含它。
+
+##### name — 显示名称
+
+```
+name 名称文本
+```
+
+| 参数    | 必需 | 说明                                                    |
+| ------- | :--: | ------------------------------------------------------- |
+| args[0] |  ✅  | 道具显示名称（含空格时用双引号包裹，如 `"ABC DEF"`）    |
+
+- **写入字段**：`itemName`。旧版二进制导入时逐字写入（`PartsMenuManager.cs:77`）。【旧版证实】
+- **作用**：编辑界面按钮/列表显示用名（如 `CreateButton(editSlotMenu, editSlotMenu.menu.itemName, ...)`，
+  `SlotMenuSelectButtonPanel.cs:284`）。同时接入本地化系统：`LocalizeManager.TryGetPartsTerm` 会按
+  Term 路径 `<category>/<文件名(不含扩展)>|name` 填充多语言表 `itemNameTermData`（`MaidEditManager.cs:124`），
+  显示时优先取本地化文本（`Menu.GetItemNameTranslation`，`Menu.cs:147-167`）。
+
+##### category — 菜单分类
+
+```
+category wear
+```
+
+| 参数    | 必需 | 说明                                        |
+| ------- | :--: | ------------------------------------------- |
+| args[0] |  ✅  | MPN 名（如 `wear`、`hairF`、`accHead`、`set_maidwear`） |
+
+- **写入字段**：`category`（MPN）。旧版编译器要求该值必须是有效 MPN 名，否则报错（`ModCompile.cs:106-119`）。【旧版证实】
+- **作用**：
+  - 决定菜单挂在哪个分类下——编辑器列表按 `category` 分组（`MaidEditManager.cs:122` 等于多处），
+    菜单面板按它过滤（`MenuPanelFilterController.cs:42`）；
+  - 运行时作为默认 SlotID：`additem` 等命令省略槽位时使用当前菜单的 `category`（`PartsMenuManager.cs:250`）。
+
+##### setumei — 说明文本
+
+```
+setumei 说明文本《改行》第二行
+```
+
+| 参数    | 必需 | 说明                                       |
+| ------- | :--: | ------------------------------------------ |
+| args[0] |  ✅  | 道具说明文本；`《改行》` 会被转换为换行    |
+
+- **写入字段**：`infoText`；`《改行》`→`\n` 替换发生在导入时（`PartsMenuManager.cs:79`）。【旧版证实】
+- **作用**：编辑界面信息面板显示（`ItemInfoPanel`）。与 `name` 相同接入本地化
+  （Term 路径 `<category>/<文件名>|info`，`Menu.GetInfoTextTranslation`，`Menu.cs:169-182`）。
+
+##### icon / icons — 菜单图标
+
+```
+icon crc_wear001_i_.tex
+icons crc_wear001_i_.tex
+```
+
+| 参数    | 必需 | 说明                                               |
+| ------- | :--: | -------------------------------------------------- |
+| args[0] |  ✅  | 图标纹理文件名；写入时去掉扩展名并转小写           |
+
+- **写入字段**：`iconFileName`（两个命令写同一个字段；旧版导入先到先得，
+  `Path.GetFileNameWithoutExtension(...).ToLower()`，`PartsMenuManager.cs:142-147`）。【旧版证实】
+- **作用**：编辑界面道具按钮的图标，`EditIconManager.GetPartsIconSprite(menu.iconFileName)` 加载
+  （`EditIconManager.cs:30` 等多处；加载失败打出 `[图标名]の画像が開けませんでした` 日志）。
+
+##### priority — 显示优先级
+
+```
+priority 100
+```
+
+| 参数    | 必需 | 说明                       |
+| ------- | :--: | -------------------------- |
+| args[0] |  ✅  | 整数；旧版导入 `int.Parse`（`PartsMenuManager.cs:150`） |
+
+- **写入字段**：`priority`（默认 0）。【旧版证实】
+- **作用**：编辑列表排序用——数值小的排在前面（各列表控制器如
+  `ButtonGroupPanel.cs:154-158`、`PartEditManager.cs:13-15`、`KCES2EditItemListController.cs:139-143`）。
+
+#### B. 菜单行为类
+
+##### unsetitem — 脱除菜单
+
+```
+unsetitem
+```
+
+| 参数 | 必需 | 说明                                 |
+| ---- | :--: | ------------------------------------ |
+| 无   |  —   | 参数数量不限但被完全忽略（只检查命令存在性，`PartsMenuManager.cs:168`） |
+
+- **写入字段**：`isDelete=true`。文件名含 `_del` 的菜单也会自动置位（`PartsMenuManager.cs:168`）。【旧版证实】
+- **作用**：该菜单代表「脱掉此槽位」：
+  - 编辑 UI 把 `isDelete` 菜单单独分组为脱除按钮（`ButtonGroupPanel.cs:162-179` 等多处）；
+  - 执行后清空该槽编辑数据并关闭所有合成层：`editBaseData=null`、全部 `savedTexDatas` 层的
+    `useLayer=false`（`PartsMenuManager.cs:1788-1817`）；
+  - 多重槽（MultiMPN）时对全部子槽设置（`PartsMenuManager.cs:1869-1877`）；
+  - 旧数据转换时把 `targetBodyType` 置 `None`、`attribute` 置 `WomanReccomend|ManReccomend`（`Menu.cs:206-210`）。
+
+##### gender — 性别限制
+
+```
+gender man_only
+gender butler
+```
+
+| 参数    | 必需 | 说明                                       |
+| ------- | :--: | ------------------------------------------ |
+| args[0] |  ✅  | `man_only` / `butler` 等（见下）           |
+
+- **写入字段**：`targetBodyType`（身体类型限制）+ `attribute`（推荐属性）。旧版导入证实：
+  `man_only` → `targetBodyType=Man`；`butler` → `attribute|=ManReccomend`（`PartsMenuManager.cs:155-166`）。【旧版证实】
+  旧数据转换表还认可 `none` / `woman_only` / `maid` 等措辞（`parts_convert_cres2_gender_*`，
+  `PartsMenuManager.cs:2322-2329`）。KCES2 新格式下若按枚举名直写应为 `Woman` / `Man` / `None`（`ExportCM.cs:152` 用
+  `ToString()` 回写旧格式），具体受编辑器的官方规范约束。【推断】
+- **作用**：
+  - `targetBodyType=Man` 的菜单只在男性编辑中列出，`Woman` 只在女性，`None` 男女通用
+    （`PartEditManager.cs:253,303`、`FaceManager.cs:296-301` 等）；
+  - `attribute` 带 `WomanReccomend`/`ManReccomend` 的菜单参与「女性推荐/男性推荐」过滤
+    （`KCESItemFilter.cs:96-129`）。
+
+##### attribute — 属性标记
+
+```
+attribute ManSuits,NoExpressionFace
+```
+
+| 参数    | 必需 | 说明                                              |
+| ------- | :--: | ------------------------------------------------- |
+| args[0] |  ✅  | Attribute 标志组合（枚举名，Flags 可组合）        |
+
+可取值（`Menu.cs:612-621`）：
+
+```
+None=0, WomanReccomend=1, ManReccomend=2, ManSuits=4, NoExpressionFace=8, NoMoveTatooHokuro=16
+```
+
+- **写入字段**：`attribute`（Flags）。
+- **作用**（游戏侧各消费点证实）：
+  - `WomanReccomend` / `ManReccomend`：编辑 UI 的推荐过滤（`KCESItemFilter.MenuAttributeFilter`、`KCES2EditItemFilterUtility.cs`）；
+  - `ManSuits`：男性西装分类过滤（`KCESItemFilter.cs:122-124`）；
+  - `NoExpressionFace`：隐藏表情相关面板/控制（`CustomViewPanel.cs:549`、`SceneKCES2EditManager.cs:318` 等多处）；
+  - `NoMoveTatooHokuro`：禁用纹身/痣的位置编辑（`EditUnitTransform.cs:257`）。
+
+##### toelock — 脚趾锁定
+
+```
+toelock shoes
+```
+
+| 参数    | 必需 | 说明                                  |
+| ------- | :--: | ------------------------------------- |
+| args[0] |  ✅  | SlotID 名（忽略大小写解析，`PartsMenuManager.cs:719`） |
+
+- **写入字段**：`toeLockSlotId`。
+- **作用**：执行 `additem` 后注册 `ToeLockCtrl.Add(该槽)`（`PartsMenuManager.cs:717-720`）。
+  当该槽可见且动画播放中，脚趾骨骼每帧被锁回初始旋转（`ToeLockCtrl.SelfLateUpdate`，
+  `ToeLockCtrl.cs:68-91`）——用于鞋子类部件防止动画中脚趾穿透/变形。典型填写 `shoes`。
+
+##### 腹揺れ対応 — 衣物腹部摇摆
+
+```
+腹揺れ対応
+腹揺れ対応 false
+```
+
+| 参数    | 必需 | 说明                                        |
+| ------- | :--: | ------------------------------------------- |
+| args[0] | 可选 | 无参数或省略 = 允许摇摆（YureAvailable）；`false` = 禁止（YureDisable） |
+
+- **写入字段**：`isHarayureAvailable`（`HaraYureLimitType`：`None`/`YureAvailable`/`YureDisable`，`Menu.cs:623-628`）。
+  导出镜像证实文本写法：`YureAvailable`→写出命令 `腹揺れ対応`（1 参数）、`YureDisable`→写法 `腹揺れ対応 false`
+  （2 参数）、`None`→不写该命令（`ExportCM.WriteHaraYureAvailable`，`ExportCM.cs:1127-1142`）。【旧版证实】
+- **作用**：`additem` 后按该值设置槽位 `IsHarayureAvailable`；为 `None`（不写）时按 MPN 默认表
+  （`Harayure.HaraYureDefaultAvailableMPNArray`）决定（`PartsMenuManager.cs:724-749`）。
+
+##### skirt_phys — 裙子物理版本
+
+```
+skirt_phys 1
+```
+
+| 参数    | 必需 | 说明             |
+| ------- | :--: | ---------------- |
+| args[0] |  ✅  | 整数（版本号）   |
+
+- **写入字段**：`skirt_phys`（int）。
+- **作用**：执行菜单时作为参数传入 `TBodySkin.AddItem`（`PartsMenuManager.cs:709,714`），
+  指定裙子的物理处理版本。导出旧格式时用 `ToString()` 回写（`ExportCM.cs:156,970`）。
+
+#### C. 颜色系统类
+
+##### define — 颜色类 Define 标记
+
+```
+define COLOR_MUGEN,COLOR_GRADA
+```
+
+| 参数    | 必需 | 说明                                            |
+| ------- | :--: | ----------------------------------------------- |
+| args[0] |  ✅  | DEFINE 标志组合（枚举名，Flags 可组合）         |
+
+可取值（`Menu.cs:595-603`）：
+
+```
+NONE=0, COLOR_MAMA=1, COLOR_MUGEN=2, COLOR_BUBUN=4, COLOR_GRADA=8
+```
+
+- **写入字段**：`defineTagNames`（另有 `defineFirst` 字段存在但游戏侧无消费）。【字段证实】
+- **作用**：
+  - 编辑 UI 以它判断菜单是否支持颜色预设编辑：只有 `!= NONE` 且**不含** `COLOR_MAMA`
+    （`COLOR_MAMA`＝沿用基础菜单颜色，无需独立预设）才启用（`ColorPresetManagerMenuDependent.cs:225`、`EditUnit.cs:22`）；
+  - 同槽多个菜单的 `defineTagNames` 必须一致才能共存编辑（`ColorPresetManagerSlotMpnDependent.cs:27`）；
+  - 运行时 `ifdef` 条件指令检查的 `defines` 参数来自菜单装载调用侧（`SetProp` 的 define 参数解析，
+    `PartsMenuManager.cs:1865`），详见 [type=51 节](#type515253-ifdef--elseifdef--endifdef--条件执行)。
+
+##### color_set — 颜色集关联
+
+```
+color_set null_mpn
+```
+
+| 参数    | 必需 | 说明   |
+| ------- | :--: | ------ |
+| args[0] |  ✅  | MPN 名（如 `null_mpn`） |
+
+- **写入字段**：`colorSet`（MPN）。旧版导入 `Parse.TryParse<MPN>`（`PartsMenuManager.cs:151-152`）。【旧版证实】
+- **作用**：游戏侧当前**没有任何消费**——仅随序列化存盘（`Menu.cs:188-195`）。
+  推测为编辑器侧的颜色集联动标记。【推断】
+
+##### colvari / colvarifile / colicon / colreqdefine — 颜色变体（colvari）组
+
+`colvari` 家族描述一个菜单的所有颜色变体（无限色切换用「颜色预设」）。举例（示意，实际写法以编辑器为准）：
+
+```
+colvarifile crc_wear001_color.*_i_
+colicon     ColorRed
+colreqdefine COLOR_MUGEN
+colvari     wear:0:_MainTex:色:...（详细参数由编辑器生成）
+```
+
+| 命令         | 写入字段                        | 填写内容                                         |
+| ------------ | ------------------------------- | ------------------------------------------------ |
+| `colvari`    | `colvariInfo.colvariDatas`     | 每条变体的颜色数据（结构见下）                   |
+| `colvarifile`| `colvariFileNameExp`           | 匹配变体菜单文件名的**正则表达式**               |
+| `colicon`    | `colvariInfo.iconFileName` / `iconColor` | 变体图标纹理名或图标颜色（`PartsColor`）        |
+| `colreqdefine`| `colvariInfo.reqDefine`       | DEFINE 名（变体适用条件）                        |
+
+- **colvarifile — 值是正则表达式**【游戏侧证实】：预设列表加载即用它匹配全部已装载菜单的文件名
+  （`Regex.IsMatch(fileName)` 后按文件名排序，`ExportCM.cs:2180-2197`、`ColorPresetProvider.cs:45,60`；`MaidInfinityColor.cs:56` 同）。
+- **colvari — 数据结构的含义**【游戏侧证实】：每条 `ColvariData`（`Menu.cs:743-808`）包含
+  `mpn`（`|` 分隔多个）、`layerName`、`colorType`/`colorTypeSub`（`NONE`/`INF_COLOR`/`PART_COLOR`/`GRADA_COLOR`）、
+  `maskData`、`alpha`、`colData`/`partColDefs`/`gradaColDef`（对应颜色的定义数据）、`mamaFileName`、
+  `useType`（`COLOR=2`/`ALPHA=1` 可组合）、`saveInfColDataLinkLayer`、`viewName`。执行时按 `mpn` 把颜色/alpha
+  写入对应槽的 `savedTexDatas[layerName]`（`MaidInfinityColor.cs:71-137`;`ExecColvari`，`MaidInfinityColor.cs:141+`）。
+- **colicon / colreqdefine**：`Colvari` 类字段存在（`Menu.cs:731-739`）【字段证实】；文本写法无游戏侧证据。【推断】
+- 与运行时 `アイテム` 命令的 `colvari=<字符>` 键值对（`_i_`→`_color_<字符>_i_` 文件名替换）呼应，见 [type=27 节](#type27-アイテム--引用子菜单)。
+
+#### D. 预编译合成类（ネイル合成 / タトゥ合成 / ほくろ合成 / そばかす合成 / ひげ合成 / しみ合成 / しわ合成 / 体毛合成）
+
+8 个合成命令在编译期把完整合成参数预编译为 `Menu.PreMulTexDatas`（`Menu.cs:643-717`），
+键是 ulong hash；运行时命令列表只保留 `hash <哈希值>` 形式（`del` 形式直接删除）。
+运行时按 hash 查 `menu.preMulTexDatas` 后以 `MulTexSet` 装配，避免运行时解析纹理——
+`ほくろ/ひげ/しみ/しわ/体毛/そばかす` 走 `TBody.MultiMoveTexAdd`（`TBody.cs:2836-2871`、`PartsMenuManager.cs:1441-1490`），
+`ネイル` 走 `TBody.NailAdd`（`TBody.cs:2879-2898`、`PartsMenuManager.cs:1491-1506`）。【游戏侧证实】
+
+文本侧编译参数格式（编辑器生成，游戏侧无编译器）与 `PreMulTexDatas` 字段对应【推断为与运行时
+`テクスチャセット合成`（type=31）同源参数】：
+
+| PreMulTexDatas 字段      | 含义                                             |
+| ------------------------ | ------------------------------------------------ |
+| `slotId` / `saveTag`     | 目标槽 / 保存标签                                |
+| `f_nMatNo` / `f_strPropName` | 材质编号 / UV 属性名                          |
+| `f_nLayerNo`             | 层编号（指甲固定 6000，`TBody.cs:2894`）         |
+| `f_strFileName`          | 纹理文件名                                       |
+| `f_eBlendMode`           | 混合模式（`SystemMaterial`）                     |
+| `maskParam` / `infColParam` | 遮罩 / 无限色参数（`TexLay.MaskParam`/`InfColorParam`） |
+| `preTransTexData`        | 变换纹理数据                                     |
+| `f_bTexGroup` / `f_nLayNoInGroup` | 组与组内层号                                 |
+| `f_fAlpha`               | 整体 alpha                                       |
+| `posDefHokuroTatooSlotId` | 痣/纹身的默认定位槽位                            |
+| `preMaskData`            | 预遮罩数据                                       |
+
+> 运行时命令列表中保留的 `hash`/`del` 写法详见 [type=46/47/48/66/68/69/70/71 节](#type4647486668697071-合成类命令)。
+
+#### E. 编辑器与版本类
+
+##### ver — 格式版本
+
+```
+ver KCES2:1000
+```
+
+| 参数    | 必需 | 说明                                 |
+| ------- | :--: | ------------------------------------ |
+| args[0] |  ✅  | 版本标签（具体格式由编辑器规范决定） |
+
+- **写入字段**：`partsVer`（`Tuple<string,int>` = 标签 + 版本号）。
+- **作用**【游戏侧证实，`Tuple` 的第二项 `Item2` 决定分代】：
+  - `null` 或 `<300` → KCES1 格式（`Menu.partsType`，`Menu.cs:95-105`）；
+  - `100~199` → COM3D2 旧发型（`Menu.hairPartsType`，`Menu.cs:108-126`）；
+  - `≥300` → KCES2 物品（`KCESItemFilter.IsCrcItem`，`KCESItemFilter.cs:131-134`）；
+  - 发型化妆的材质版本对比（`HairMakeController.cs:420`）与导出元数据 `materialPerOriginalMenuVersion`
+    （`ExportKCES.cs:122`）也读它。
+- **不要与运行时命令 `ver`（type=26）混淆**：type=26 在命令列表中占位（1/2 参数），本命令在编译期被吸收为元数据。
+
+##### edit — 编辑器中隐藏
+
+```
+edit
+```
+
+| 参数 | 必需 | 说明     |
+| ---- | :--: | -------- |
+| 无   |  —   | 无参数   |
+
+- **写入字段**：`hideInEdit=true`。
+- **作用**【游戏侧证实】：编辑模式构建菜单列表时过滤 `hideInEdit`（与 `isDiff` 同等待遇）——
+  `MaidEditManager.cs:122,325` 的 `!menu.isDiff && !menu.hideInEdit` 条件。
+  用于隐藏仅被其它菜单引用的内部/派生菜单，不直接出现在道具列表里。
+
+##### formtex — 发型形态导出纹理
+
+```
+formtex crc_hairF001_form.tex
+```
+
+| 参数    | 必需 | 说明             |
+| ------- | :--: | ---------------- |
+| args[0] |  ✅  | 纹理文件名       |
+
+- **写入字段**：`exportModelFormTextureName`。
+- **作用**【游戏侧证实】：发型化妆（HairMake）编辑器中判定支持的菜单
+  （`HairMakeController.cs:1870`），导出形态模型时用作形态纹理读取
+  （`HairMakeController.cs:1941-1944`，读不到时报 `のマスクテクスチャー[...]が読み込めませんでした`）。
+
+##### filter — 编辑过滤器
+
+- **现状**：`filter` 在 CompileType 枚举中存在，但 `Menu` 对象没有对应字段、游戏中也没有消费点。
+  推测是编辑器侧的筛选提示标记（如 KCES1 时代编辑方式提示），KCES2 中被弃用。【推断】
+  若在旧菜单文本中见到，可以安全忽略。
+
+---
+
+> **验证状态说明**（v2）：
+> - **游戏侧直接证实**：解析规则（2.2）、合成类的预编译→hash 装配链路（2.4-D）、
+>   `defines`/`attribute`/`targetBodyType`/`priority`/`isDelete`/`hideInEdit`/`toeLockSlotId`/
+>   `exportModelFormTextureName`/`isHarayureAvailable`/`skirt_phys`/`partsVer`/`colvariInfo`/
+>   `colvariFileNameExp`/`preMulTexDatas`/`itemName`/`infoText`/`iconFileName` 的消费逻辑。
+> - **旧版路径证实**：`icon`/`icons`→`iconFileName`（去扩展名+小写）、`priority`→`int.Parse`、
+>   `color_set`→`colorSet`、`gender` 的 `man_only`/`butler`、`unsetitem`→`isDelete`、
+>   `end`/`if`→`endcommand`/`ifcommand` 补全、`《改行》`→换行、`腹揺れ対応` 的两种写法
+>   （`CreatePartsMenuFromOldMenu` / `ExportCM.WriteHaraYureAvailable`）。
+> - **推断（编辑器侧行为，游戏侧无法证实）**：`ver`/`gender`/`define`/`colvari`/`colicon`/
+>   `colreqdefine` 的精确文本写法、`メニューフォルダ` 在 KCES2 中的实际用途、`filter` 的用途。
+>   这些以官方编辑器（KCES_MOD_EDITOR）的实际行为为准。
 
 ---
 
