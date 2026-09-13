@@ -1,8 +1,8 @@
 # Menu.Command 完整参考文档
 
-本文档基于 `Parts/Menu.cs` 和 `PartsMenuManager.cs` 源码分析，详细记录 `.menu` 文件中所有命令的用法。
+本文档基于 KCES2 1.36.0 源码分析，详细记录 `.menu` 文件中所有命令的用法。
 
-由 deepseek-v4-pro + claude opus 5 校验多次完成。
+由 deepseek-v4-pro max 与 claude-opus-5 max 校对多次完成。
 
 ## 文件格式概要
 
@@ -31,6 +31,11 @@ KCES 的 `.menu` 源文件（以及旧版 CM3D2/COM3D2）为纯文本，每行�
 
 - **CompileType（编译时命令）**：在编译阶段提取为菜单元数据，不进入 commandList
 - **Type（运行时命令）**：进入游戏后执行，存储在 `commandList` 中
+
+
+### 如何编辑
+
+请使用 [https://github.com/MeidoPromotionAssociation/KCES_MOD_EDITOR](https://github.com/MeidoPromotionAssociation/KCES_MOD_EDITOR)
 
 ---
 
@@ -68,7 +73,7 @@ KCES 的 `.menu` 源文件（以及旧版 CM3D2/COM3D2）为纯文本，每行�
 |   25   | `useredit`               | 用户编辑           |
 |   26   | `ver`                    | 版本号             |
 |   27   | `アイテム`               | 引用子菜单         |
-|   28   | `アイテムパラメーター`   | 物品参数           |
+|   28   | `アイテムパラメータ`     | 物品参数           |
 |   29   | `アイテム条件`           | 物品条件           |
 |   30   | `アタッチポイントの設定` | Attach 点设置      |
 |   31   | `テクスチャセット合成`   | 纹理集合成         |
@@ -162,7 +167,7 @@ KCES 的 `.menu` 源文件（以及旧版 CM3D2/COM3D2）为纯文本，每行�
 
 ## 三、Type 运行时命令详解
 
-以下命令在游戏运行时按 `commandList` 顺序执行。每个命令的参数以 `args[N]` 标注。
+以下命令在游戏运行时按 `commandList` 顺序执行。每个命令的参数以 `args[N]` 标注。 `args[0]` 代表第一个参数，`args[1]` 代表第二个参数。
 
 ---
 
@@ -270,7 +275,7 @@ blendset
 **8 参数格式**（仅位置）：
 
 ```json
-{ "type": 4, "args": ["骨骼名", "变形名", "x1", "y1", "z1", "x2", "y2", "z2"] }
+{ "type": 4, "args": ["属性名", "骨骼名", "x1", "y1", "z1", "x2", "y2", "z2"] }
 ```
 
 **9 参数格式**（指定类型）：
@@ -278,24 +283,26 @@ blendset
 ```json
 {
   "type": 4,
-  "args": ["pos", "骨骼名", "变形名", "x1", "y1", "z1", "x2", "y2", "z2"]
+  "args": ["pos", "属性名", "骨骼名", "x1", "y1", "z1", "x2", "y2", "z2"]
 }
 ```
 
-| 参数      | 必需 | 说明                                                 |
-| --------- | :--: | ---------------------------------------------------- |
-| args[0]   |  ✅  | 类型（`pos`/`rot`/`scl`，8参数格式省略则默认 `pos`） |
-| args[1]   |  ✅  | 骨骼名                                               |
-| args[2]   |  ✅  | 变形名                                               |
-| args[3-5] |  ✅  | 初始值 (x, y, z)                                     |
-| args[6-8] |  ✅  | 目标值 (x, y, z)                                     |
+| 参数      | 必需 | 说明                                                                          |
+| --------- | :--: | ----------------------------------------------------------------------------- |
+| args[0]   |  ✅  | 类型（`pos`/`rot`/`scl`，比较前 `ToLower()`；8 参数格式省略则按 `pos` 处理）  |
+| args[1]   |  ✅  | 属性名（`strPropName`，即驱动该变形的 MPN 属性名，如 `MayuY`、`EyeBallSclX`） |
+| args[2]   |  ✅  | 骨骼名（`trBone.name`）                                                       |
+| args[3-5] |  ✅  | 最小值增量 (x, y, z)                                                          |
+| args[6-8] |  ✅  | 最大值增量 (x, y, z)                                                          |
+
+> 注意：两组向量是**相对骨骼当前 local 变换的增量**而非绝对值（`m_vAddMin = trBone.localPosition + f_fAddMin`，`TMorphBone.cs:329-357`）。属性名与骨骼名同时参与 `Find` 匹配，任一不符则找不到目标、静默无效。8 参数格式下 args[0] 是属性名、args[1] 是骨骼名（`ChangeMorphPosValue(args[0], args[1], …)`），不是「骨骼名 + 变形名」。
 
 **编辑器命令示例**（8 参数格式）：
 
 ```
 bonemorph
-    骨骼名
-    变形名
+    MayuY
+    Mayu_R
     0.0
     0.0
     0.0
@@ -309,8 +316,8 @@ bonemorph
 ```
 bonemorph
     pos
-    骨骼名
-    变形名
+    MayuY
+    Mayu_R
     0.0
     0.0
     0.0
@@ -856,15 +863,24 @@ tex
 }
 ```
 
-| 参数    | 必需 | 说明                                                   |
-| ------- | :--: | ------------------------------------------------------ |
-| args[0] |  ✅  | 编辑目标名称（如 `前髪裏耳`）                          |
-| args[1] |  ✅  | 编辑类型（当前仅支持 `Material`，其他值会被静默忽略）  |
-| args[2] |  ✅  | 目标 SlotID（如 `head`, `wear`）                       |
-| args[3] |  ✅  | 材质编号                                               |
-| args[4] |  ✅  | 属性名（如 `_ZTest`, `_MainTex`）                      |
-| args[5] |  ✅  | 属性类型（如 `UnityEngine.Rendering.CompareFunction`） |
-| args[6] |  ✅  | 属性值                                                 |
+| 参数    | 必需 | 说明                                                                                                                |
+| ------- | :--: | ------------------------------------------------------------------------------------------------------------------- |
+| args[0] |  ✅  | 保存标签（`saveTag`，写入编辑存档用于还原）                                                                         |
+| args[1] |  ✅  | 编辑类型（比较前 `ToLower()`，当前仅支持 `Material`，其他值会被静默忽略）                                           |
+| args[2] |  ✅  | 目标 SlotID（如 `head`, `wear`）                                                                                    |
+| args[3] |  ✅  | 材质编号                                                                                                            |
+| args[4] |  ✅  | 属性名（如 `_ZTest`, `_Shininess`）                                                                                 |
+| args[5] |  ✅  | 属性类型，仅识别 `DEFINE` / `TEX_OFFSET` / `TEX_SCALE` / `Color` 四个关键字，**其它任何写法一律按 `SetFloat` 处理** |
+| args[6] |  ✅  | 属性值                                                                                                              |
+
+属性类型的实际行为（`MaterialMgr.SetMaterialProperty`，`MaterialMgr.cs:1465-1515`）：
+
+- `DEFINE`：值为 `0` 时 `DisableKeyword(属性名)`，为 `1` 时 `EnableKeyword(属性名)`
+- `TEX_OFFSET` / `TEX_SCALE`：值写作 `u:v`，调用 `SetTextureOffset` / `SetTextureScale`
+- `Color`：值写作 `r:g:b:a`（0~1 浮点），调用 `SetColor`
+- 其它：`SetFloat(属性名, float.Parse(值))`——所以旧式写法 `System.Single`、`UnityEngine.Rendering.CompareFunction` 都只是走到这个分支，类型名本身并不被解析
+
+> 注意：属性名 `_ZTest2` 会被改写成 `_ZTest`，且值 `1` 变 `4`、其它变 `8`。属性在 shader 上不存在时只记录错误、不中断执行。
 
 **编辑器命令示例**：
 
@@ -875,7 +891,7 @@ useredit
     head
     3
     _ZTest
-    UnityEngine.Rendering.CompareFunction
+    System.Single
     4
 ```
 
@@ -927,7 +943,7 @@ ver
 
 ---
 
-### type=28: アイテムパラメーター — 物品参数
+### type=28: アイテムパラメータ — 物品参数
 
 ```json
 { "type": 28, "args": ["wear", "参数名", "参数值"] }
@@ -935,12 +951,12 @@ ver
 
 恰好 3 个参数。在所有其他命令执行完后统一设置。
 
-> 注意：此命令的枚举名为 `アイテムパラメーター`（パラメーター 带长音，源码 `Menu.cs:546`）。`アイテム条件`（type=29）格式 3 的固定 token `のアイテムパラメータの` 则是无长音拼写（源码硬编码比较，`PartsMenuManager.cs:496`），二者拼写不同，请勿混淆。
+> 注意：此命令的枚举名为 `アイテムパラメータ`（`Menu.cs:546` 写作 `アイテムパラメータ`，即长音符在「メ」与「タ」之间，末尾**不带**长音）。`アイテム条件`（type=29）格式 3 的固定 token `のアイテムパラメータの`（源码硬编码比较，`PartsMenuManager.cs:496`）与之拼写一致。
 
 **编辑器命令示例**：
 
 ```
-アイテムパラメーター
+アイテムパラメータ
     wear
     param_name
     param_value
@@ -1454,13 +1470,15 @@ pattern
 { "type": 44, "args": ["SlotID", "材质编号", "属性名", "属性类型", "属性值"] }
 ```
 
-| 参数    | 必需 | 说明                                                            |
-| ------- | :--: | --------------------------------------------------------------- |
-| args[0] |  ✅  | SlotID                                                          |
-| args[1] |  ✅  | 材质编号                                                        |
-| args[2] |  ✅  | 属性名（如 `_Shininess`, `_MainTex`）                           |
-| args[3] |  ✅  | 属性类型（如 `System.Single`, `UnityEngine.Color`, 纹理路径等） |
-| args[4] |  ✅  | 属性值                                                          |
+| 参数    | 必需 | 说明                                                                                                     |
+| ------- | :--: | -------------------------------------------------------------------------------------------------------- |
+| args[0] |  ✅  | SlotID                                                                                                   |
+| args[1] |  ✅  | 材质编号                                                                                                 |
+| args[2] |  ✅  | 属性名（如 `_Shininess`, `_Cutoff`）                                                                     |
+| args[3] |  ✅  | 属性类型，仅识别 `DEFINE` / `TEX_OFFSET` / `TEX_SCALE` / `Color`，**其它任何写法一律按 `SetFloat` 处理** |
+| args[4] |  ✅  | 属性值                                                                                                   |
+
+> 与 `useredit`（type=25）走同一个底层写入函数 `TBody.SetMaterialProperty`，区别是本命令不带保存标签、`f_strSaveLoadMpnName` 传 `null`，因此不参与编辑存档。属性类型的四个关键字及其值格式详见 type=25 的说明。
 
 **编辑器命令示例**：
 
@@ -1803,12 +1821,14 @@ meshmorph
 { "type": 57, "args": ["accUde_2", "0", "accUde", "0"] }
 ```
 
-| 参数    | 必需 | 说明         |
-| ------- | :--: | ------------ |
-| args[0] |  ✅  | 源 SlotID    |
-| args[1] |  ✅  | 源材质编号   |
-| args[2] |  ✅  | 目标 SlotID  |
-| args[3] |  ✅  | 目标材质编号 |
+| 参数    | 必需 | 说明                              |
+| ------- | :--: | --------------------------------- |
+| args[0] |  ✅  | 接收方 SlotID（材质被替换的一方） |
+| args[1] |  ✅  | 接收方材质编号                    |
+| args[2] |  ✅  | 提供方 SlotID（材质的来源）       |
+| args[3] |  ✅  | 提供方材质编号                    |
+
+> 注意：方向是 args[0] ← args[2]。源码签名为 `ShareMaterial(slotNameTo=args[0], subPropNo, matNoTo=args[1], slotNameFrom=args[2], matNoFrom=args[3])`（`TBody.cs:2097`），即前两个参数是被改写的一方、后两个才是来源。上例表示 `accUde_2` 借用 `accUde` 的材质实例，从而颜色与纹理自动联动。
 
 **编辑器命令示例**：
 
@@ -1888,15 +1908,20 @@ addbonemorph
 ### type=60: adjcutoff — Cutout 调整
 
 ```json
-{ "type": 60, "args": ["编号", "纹理名", "阈值1:标签1", "阈值2:标签2"] }
+{
+  "type": 60,
+  "args": ["0", "_Cutoff", "0.45:Stkg7", "0.35:Stkg6", "0.25:Stkg5"]
+}
 ```
 
-| 参数     | 必需 | 说明            |
-| -------- | :--: | --------------- |
-| args[0]  |  ✅  | 编号（整数）    |
-| args[1]  |  ✅  | 纹理名          |
-| args[2+] |  ✅  | `阈值[:标签名]` |
+| 参数     | 必需 | 说明                                              |
+| -------- | :--: | ------------------------------------------------- |
+| args[0]  |  ✅  | 材质编号（整数）                                  |
+| args[1]  |  ✅  | shader 上的**浮点属性名**（真实样本为 `_Cutoff`） |
+| args[2+] |  ✅  | `阈值[:形态名]`，按档位依次列出                   |
 
+> 注意：args[1] 是 shader 的 float 属性名而不是纹理名——源码 `SetCutoutMask(prop, matNo, propName, thresholds)` 最终执行 `m_materials[matNo].SetFloat(propName, 阈值)`（`MaterialMgr.cs:1374-1415`）。
+> 档位标签是**网格形态名**：切换到某一档时，游戏会把该档标签以 `靴下` Tag 加成 1.0（`TBody.UpdateCutoutMask`，`TBody.cs:1939-1960`），因此常用于丝袜的厚度/长度档。
 > 作用槽位取自最近一次执行到的 `additem` 的 SlotID（本菜单无 `additem` 时为菜单的 category）。
 
 **编辑器命令示例**：
@@ -1904,9 +1929,10 @@ addbonemorph
 ```
 adjcutoff
     0
-    tex.tex
-    128:タグ1
-    200:タグ2
+    _Cutoff
+    0.45:Stkg7
+    0.35:Stkg6
+    0.25:Stkg5
 ```
 
 ---
@@ -2107,11 +2133,13 @@ cutout消去
 { "type": 73, "args": ["SlotID", "材质编号", "纹理名"] }
 ```
 
-| 参数    | 必需 | 说明       |
-| ------- | :--: | ---------- |
-| args[0] |  ✅  | SlotID     |
-| args[1] |  ✅  | 材质编号   |
-| args[2] |  ✅  | 纹理文件名 |
+| 参数    | 必需 | 说明          |
+| ------- | :--: | ------------- |
+| args[0] |  ✅  | SlotID        |
+| args[1] |  ✅  | 材质编号      |
+| args[2] |  ✅  | ID 纹理文件名 |
+
+> 注意：args[2] 是**触摸区域 ID 纹理**——源码走 `MaterialMgr.SetEditTouchAreaTex(matNo, fileName)` → `EditTouchAreaMgr.SetIdTex(fileName)`（`MaterialMgr.cs:276-284`），决定编辑界面点击模型时命中哪个部位。对同一材质重复设置时，先前的 ID 纹理会被释放。
 
 **编辑器命令示例**：
 
@@ -2119,7 +2147,7 @@ cutout消去
 タッチ範囲tex
     body
     0
-    touch_range.tex
+    touch_range_id.tex
 ```
 
 ---
@@ -2129,20 +2157,175 @@ cutout消去
 ### TBody.SlotID（槽位标识）
 
 ```
-body, head, eye, headset, wear, skirt, onepiece, mizugi, mizugi_top, mizugi_buttom,
-panz, slip, bra, stkg, shoes, hairF, hairR, hairS, hairS_2, hairT, hairT_2,
-hairAho, accHat, accHead, accHead_2, megane, accMiMiL, accMiMiR, accHana,
-accFace, accKubi, accNipL, accNipR, accKoshi, accUde, accUde_2, glove,
-accHeso, accAshi, accAshi_2, accSenaka, accShippo, accVag,
-accKamiSubL, accKamiSubR, accAnl, accXXX, moza, chinko, chikubi,
-accAcc1 ~ accAcc72, HandItemR, HandItemL, ...
+public enum SlotID
+{
+    none = -1,
+    body,
+    head,
+    eye,
+    hairF,
+    hairR,
+    hairS,
+    hairS_2,
+    hairT,
+    hairT_2,
+    wear,
+    skirt,
+    onepiece,
+    mizugi,
+    mizugi_top,
+    mizugi_buttom,
+    panz,
+    slip,
+    bra,
+    stkg,
+    shoes,
+    headset,
+    glove,
+    jacket,
+    vest,
+    shirt,
+    accHead,
+    accHead_2,
+    hairAho,
+    accHana,
+    accHa,
+    accKami_1_,
+    accMiMiR,
+    accKamiSubR,
+    accNipR,
+    HandItemR,
+    accKubi,
+    accKubiwa,
+    accHeso,
+    accUde,
+    accUde_2,
+    accAshi,
+    accAshi_2,
+    accSenaka,
+    accShippo,
+    accKoshi,
+    accAnl,
+    accVag,
+    kubiwa,
+    megane,
+    accXXX,
+    chinko,
+    chikubi,
+    accFace,
+    accHat,
+    accHat_2,
+    kousoku_upper,
+    kousoku_lower,
+    seieki_naka,
+    seieki_hara,
+    seieki_face,
+    seieki_mune,
+    seieki_hip,
+    seieki_ude,
+    seieki_ashi,
+    accNipL,
+    accMiMiL,
+    accKamiSubL,
+    accKami_2_,
+    accKami_3_,
+    HandItemL,
+    underhair,
+    asshair,
+    moza,
+    end,
+    accAcc1,
+    accAcc2,
+    accAcc3,
+    accAcc4,
+    accAcc5,
+    accAcc6,
+    accAcc7,
+    accAcc8,
+    accAcc9,
+    accAcc10,
+    accAcc11,
+    accAcc12,
+    accAcc13,
+    accAcc14,
+    accAcc15,
+    accAcc16,
+    accAcc17,
+    accAcc18,
+    accAcc19,
+    accAcc20,
+    accAcc21,
+    accAcc22,
+    accAcc23,
+    accAcc24,
+    accAcc25,
+    accAcc26,
+    accAcc27,
+    accAcc28,
+    accAcc29,
+    accAcc30,
+    accAcc31,
+    accAcc32,
+    accAcc33,
+    accAcc34,
+    accAcc35,
+    accAcc36,
+    accAcc37,
+    accAcc38,
+    accAcc39,
+    accAcc40,
+    accAcc41,
+    accAcc42,
+    accAcc43,
+    accAcc44,
+    accAcc45,
+    accAcc46,
+    accAcc47,
+    accAcc48,
+    accAcc49,
+    accAcc50,
+    accAcc51,
+    accAcc52,
+    accAcc53,
+    accAcc54,
+    accAcc55,
+    accAcc56,
+    accAcc57,
+    accAcc58,
+    accAcc59,
+    accAcc60,
+    accAcc61,
+    accAcc62,
+    accAcc63,
+    accAcc64,
+    accAcc65,
+    accAcc66,
+    accAcc67,
+    accAcc68,
+    accAcc69,
+    accAcc70,
+    accAcc71,
+    accAcc72
+}
 ```
 
 ### GameUtility.SystemMaterial（混合模式）
 
 ```
-Alpha, BlendSelf, Multiply, InfinityColor, InfinityColorPart, InfinityColorGrada,
-TexTo8bitTex, AddNormal, AlphaDstAlpha, Screen, Max
+public enum SystemMaterial
+{
+    Alpha,
+    BlendSelf,
+    Multiply,
+    InfinityColor,
+    InfinityColorPart,
+    InfinityColorGrada,
+    TexTo8bitTex,
+    AddNormal,
+    AlphaDstAlpha,
+    Screen,
+    Max
+}
 ```
 
 > 旧版 COM3D2 中的 `Mul`/`Add`/`Sub`/`Min` 在 KCES 中不存在，请勿混用。
@@ -2150,8 +2333,33 @@ TexTo8bitTex, AddNormal, AlphaDstAlpha, Screen, Max
 ### MaidInfinityColor.PARTS_COLOR（部件颜色类型）
 
 ```
-NONE = -1, HAIR, EYE_BROW, UNDER_HAIR, ASS_HAIR, SKIN, ..., PART_COLOR,
-GRADA_COLOR, MAKE, MUGEN_COLOR, HIGE, SHIMI, SHIWA, BODY_HAIR, MAX
+public enum PARTS_COLOR
+{
+    NONE = -1,
+    HAIR,
+    EYE_BROW,
+    UNDER_HAIR,
+    ASS_HAIR,
+    SKIN,
+    HAIR_OUTLINE,
+    SKIN_OUTLINE,
+    EYE_WHITE,
+    HOKURO,
+    TATOO,
+    SOBAKASU,
+    MATSUGE_UP,
+    MATSUGE_LOW,
+    FUTAE,
+    PART_COLOR,
+    GRADA_COLOR,
+    MAKE,
+    MUGEN_COLOR,
+    HIGE,
+    SHIMI,
+    SHIWA,
+    BODY_HAIR,
+    MAX
+}
 ```
 
 （menu 命令中常用：NONE / MUGEN_COLOR / GRADA_COLOR / PART_COLOR / MAKE）
@@ -2164,22 +2372,352 @@ ALPHA_NONE, ALPHA_TEX, ALPHA_MAT
 
 ### MPN（装备分类）
 
-```
-null_mpn, body, head, hairf, hairr, hairs, hairt, hairaho, haircolor, skin,
-underhair, asshair, armpithair, hokuro, eye, eye_r, eye_hi, eye_hi_r, wear,
-skirt, mizugi, mizugi_top, mizugi_buttom, bra, panz, slip, stkg, shoes,
-headset, glove, acchead, accha, acchana, accface, acckamisub, acckami,
-accmimi, accnip, acckubi, acckubiwa, accheso, accude, accashi, accsenaka,
-accshippo, acckoshi, accanl, accvag, megane, accxxx, handitem, acchat,
-onepiece, outerwear, jacket, vest, shirt, moza, ...
-set_maidwear, set_mywear, set_underwear, set_body, set_face (套装类)
-accAcc1 ~ accAcc24 (Accessories 1-24)
+    ```
+
+public enum MPN
+{
+null_mpn,
+Hara,
+KubiScl,
+UdeScl,
+DouPer,
+sintyou,
+kata,
+MuneL,
+MuneS,
+MuneM,
+MuneUpDown,
+MuneYori,
+MuneYawaraka,
+MunePosX,
+MunePosY,
+MuneThick,
+MuneLong,
+MuneDir,
+DouThick1X,
+DouThick1Y,
+DouThick2X,
+DouThick2Y,
+DouThick3X,
+DouThick3Y,
+ShoulderThick,
+UpperArmThickX,
+UpperArmThickY,
+LowerArmThickX,
+LowerArmThickY,
+ElbowThickX,
+ElbowThickY,
+NeckThickX,
+NeckThickY,
+HandSize,
+DouThick4X,
+DouThick4Y,
+DouThick5X,
+DouThick5Y,
+WaistPos,
+HipSize,
+HipRot,
+ThighThickX,
+ThighThickY,
+KneeThickX,
+KneeThickY,
+CalfThickX,
+CalfThickY,
+AnkleThickX,
+AnkleThickY,
+FootSize,
+UpperArmLowerThickX,
+UpperArmLowerThickY,
+WristThickX,
+WristThickY,
+ClavicleThick,
+ShoulderTension,
+ThighLowerThickX,
+ThighLowerThickY,
+ThighShin,
+HaraN,
+ChikubiH,
+ChikubiK1,
+ChikubiK2,
+ChikubiK2_MuneS,
+ChikubiR,
+ChikubiW,
+Nyurin1,
+Nyurin2,
+Nyurin3,
+Nyurin4,
+Nyurin5,
+Nyurin6,
+Nyurin7,
+Nyurin8,
+ChikubiWearTotsu,
+NyurinScale,
+FatUpper,
+FatUnder,
+MuscleSkin,
+HipYawaraka,
+HaraYawaraka,
+MuneSpringPower,
+MuneSpringMove,
+HaraSpringPower,
+HaraSpringMove,
+HipSpringPower,
+HipSpringMove,
+HeadX,
+HeadY,
+FaceShape,
+FaceShapeSlim,
+EyeSclX,
+EyeSclY,
+EyePosX,
+EyePosY,
+EyePosX_2,
+EyePosY_2,
+EyeClose,
+EyeBallPosY,
+EyeBallSclX,
+EyeBallSclY,
+EarNone,
+EarElf,
+EarRot,
+EarScl,
+NosePos,
+NoseScl,
+MayuShapeIn,
+MayuShapeOut,
+MayuX,
+MayuY,
+MayuY_2,
+MayuRot,
+MayuThick,
+MayuLong,
+Yorime,
+MabutaUpIn,
+MabutaUpIn2,
+MabutaUpMiddle,
+MabutaUpOut,
+MabutaUpOut2,
+MabutaLowIn,
+MabutaLowMiddle,
+MabutaLowOut,
+Eyedel,
+Itome,
+Ha1,
+Ha2,
+Ha3,
+Ha4,
+Ha5,
+Ha6,
+FutaePosX,
+FutaePosY,
+FutaeRot,
+HitomiHiPosX,
+HitomiHiPosY,
+HitomiHiSclY,
+HitomiShapeUp,
+HitomiShapeLow,
+HitomiShapeIn,
+HitomiShapeOutUp,
+HitomiShapeOutLow,
+HitomiRot,
+HohoShape,
+LipThick,
+WearSuso,
+WearMuneShadowRate,
+KuikomiPants,
+KuikomiStkg,
+CheekRate,
+FaceglossRate,
+MayuRate,
+EyeShadowRate,
+EyeHiRateL,
+EyeHiRateR,
+LipRate,
+LipTsuyaRate,
+NailTsuyaRate,
+SkinHiyakeRate,
+ArmpitHairRate,
+UnderHairRate,
+AssHairRate,
+StkgRate,
+LipShadowRate,
+Hanasuji,
+Washibana,
+EyeDel_shadowRate,
+Nose_RimlightMask,
+Ago_Back_Foward,
+Ago_Long_Short,
+Ago_Sharp,
+AgoHaba_Large_Small,
+AgoNiku_Fat_Slim,
+AgoSentan_Back_Foward,
+AgoSentan_Long_Short,
+AgoSentan_Sharp,
+AgoSentanHaba_Large_Small,
+AgoSide_Back_Foward,
+Cheekbone_Sharp,
+Cheekbone_Slim_Fat,
+Era_Sharp,
+EyePosZ,
+Face_Slim,
+Face_UnderBack_Foward,
+Face_UnderLarge_Small,
+Ho_UnderBack_Foward,
+Ho_UpperBack_Foward,
+Ho_Sharp,
+Ho_Down_Up,
+Ho_Hukurami,
+Hanasuji_Back_Foward,
+NoseSentan_Marumi,
+NoseSentan_Sharp,
+Nose_Shape,
+body,
+moza,
+head,
+hairf,
+hairr,
+hairt,
+hairs,
+hairaho,
+haircolor,
+skin,
+skin_nikukan,
+skin_hiyake,
+acctatoo,
+accnail,
+underhair,
+asshair,
+armpithair,
+hokuro,
+mayu,
+lip,
+lip_tsuya,
+chikubi,
+nyurin,
+eye,
+eye_r,
+eye_hi,
+eye_hi_r,
+eyewhite,
+eyewhite_r,
+nose,
+facegloss,
+matsuge_up,
+matsuge_low,
+futae,
+hoho_some,
+eye_shadow,
+cheek,
+EyeDel_shadow,
+nail_hi,
+kuchi_naka,
+sobakasu,
+hige,
+shiwa,
+shimiibo,
+bodyhair,
+wear,
+skirt,
+mizugi,
+mizugi_top,
+mizugi_buttom,
+bra,
+panz,
+slip,
+stkg,
+shoes,
+headset,
+glove,
+acchead,
+accha,
+acchana,
+accface,
+acckamisub,
+acckami,
+accmimi,
+accnip,
+acckubi,
+acckubiwa,
+accheso,
+accude,
+accashi,
+accsenaka,
+accshippo,
+acckoshi,
+accanl,
+accvag,
+megane,
+accxxx,
+handitem,
+acchat,
+onepiece,
+outerwear,
+jacket,
+vest,
+shirt,
+accAcc1,
+accAcc2,
+accAcc3,
+accAcc4,
+accAcc5,
+accAcc6,
+accAcc7,
+accAcc8,
+accAcc9,
+accAcc10,
+accAcc11,
+accAcc12,
+accAcc13,
+accAcc14,
+accAcc15,
+accAcc16,
+accAcc17,
+accAcc18,
+accAcc19,
+accAcc20,
+accAcc21,
+accAcc22,
+accAcc23,
+accAcc24,
+set_maidwear,
+set_mywear,
+set_underwear,
+set_body,
+set_face,
+folder_eye,
+folder_mayu,
+folder_underhair,
+folder_asshair,
+folder_skin,
+folder_eyewhite,
+folder_chikubi,
+folder_nyurin,
+folder_matsuge_up,
+folder_matsuge_low,
+folder_futae,
+folder_lip,
+folder_cheek,
+folder_eye_shadow,
+NyurinSelect,
+kousoku_upper,
+kousoku_lower,
+seieki_naka,
+seieki_hara,
+seieki_face,
+seieki_mune,
+seieki_hip,
+seieki_ude,
+seieki_ashi
+}
+
 ```
 
 ### Menu.DEFINE（定义标记）
 
 ```
+
 NONE=0, COLOR_MAMA=1, COLOR_MUGEN=2, COLOR_BUBUN=4, COLOR_GRADA=8
+
 ```
 
 Flags 枚举，可组合。
@@ -2187,13 +2725,17 @@ Flags 枚举，可组合。
 ### Menu.TargetBodyType（身体类型）
 
 ```
+
 None=0, Woman=1, Man=2
+
 ```
 
 ### Menu.Attribute（属性标记）
 
 ```
+
 None=0, WomanReccomend=1, ManReccomend=2, ManSuits=4, NoExpressionFace=8, NoMoveTatooHokuro=16
+
 ```
 
 Flags 枚举。
@@ -2201,7 +2743,9 @@ Flags 枚举。
 ### TBody.MOVE_HIDE_MODE（移动隐藏模式）
 
 ```
+
 NONE=0, MOVE=1, HIDE=2
+
 ```
 
 Flags 枚举，可组合（如 `MOVE&HIDE`）。
@@ -2209,13 +2753,17 @@ Flags 枚举，可组合（如 `MOVE&HIDE`）。
 ### TBody.PART_HIDE_TYPE（部件隐藏类型）
 
 ```
+
 TYPE_BONE_WEIGHT, TYPE_SLOT_VISIBLE
+
 ```
 
 ### TMorphSkin.BaseBlendValue.Tag（meshmorph 变形标签）
 
 ```
+
 パンツ, 靴下, MAX
+
 ```
 
 > meshmorph 的 args[0] 目前只有 `パンツ`/`靴下` 两个有效值。
@@ -2223,7 +2771,9 @@ TYPE_BONE_WEIGHT, TYPE_SLOT_VISIBLE
 ### Menu.HaraYureLimitType（腹部摇摆）
 
 ```
+
 None=0, YureAvailable=1, YureDisable=2
+
 ```
 
 ---
