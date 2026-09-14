@@ -133,7 +133,7 @@ KCES 使用 MessagePack 序列化格式。每个 `.menuassets` 是一个容器�
 
 以下命令在游戏运行时按 `commandList` 顺序执行。每个命令的参数以 `args[N]` 标注。 `args[0]` 代表第一个参数，`args[1]` 代表第二个参数。
 
-### type=0: additem — 添加物品/模型
+#### type=0: additem — 添加物品/模型
 
 ```json
 {
@@ -164,7 +164,7 @@ additem
 
 ---
 
-### type=1: anime — 物品动画
+#### type=1: anime — 物品动画
 
 ```json
 { "type": 1, "args": ["accHead", "anim_name", "loop"] }
@@ -187,7 +187,7 @@ anime
 
 ---
 
-### type=2: animematerial — 材质动画
+#### type=2: animematerial — 材质动画
 
 ```json
 { "type": 2, "args": ["wear", "0"] }
@@ -208,7 +208,7 @@ animematerial
 
 ---
 
-### type=3: blendset — 变形集定义
+#### type=3: blendset — 变形集定义
 
 ```json
 { "type": 3, "args": ["表情名", "变形键1", "0.5", "变形键2", "1.0"] }
@@ -232,7 +232,7 @@ blendset
 
 ---
 
-### type=4: bonemorph — 骨骼变形
+#### type=4: bonemorph — 骨骼变形
 
 **8 参数格式**（仅位置）：
 
@@ -290,7 +290,7 @@ bonemorph
 
 ---
 
-### type=5: color — 材质颜色
+#### type=5: color — 材质颜色
 
 ```json
 { "type": 5, "args": ["head", "0", "_Color", "255", "128", "64", "255"] }
@@ -319,7 +319,7 @@ color
 
 ---
 
-### type=6: commenttype — 注释
+#### type=6: commenttype — 注释
 
 ```json
 { "type": 6, "args": ["注释内容"] }
@@ -336,7 +336,7 @@ commenttype
 
 ---
 
-### type=7: delitem — 删除物品
+#### type=7: delitem — 删除物品
 
 ```json
 {"type": 7, "args": []}
@@ -356,7 +356,7 @@ delitem
 
 ---
 
-### type=8: endcommand — 命令结束
+#### type=8: endcommand — 命令结束
 
 ```json
 { "type": 8, "args": [] }
@@ -372,7 +372,7 @@ endcommand
 
 ---
 
-### type=9: ifcommand — 条件命令
+#### type=9: ifcommand — 条件命令
 
 ```json
 {
@@ -416,7 +416,7 @@ ifcommand
 
 ---
 
-### type=10: length — 头发长度
+#### type=10: length — 头发长度
 
 ```json
 {
@@ -465,7 +465,7 @@ length
 
 ---
 
-### type=11: mancolor — 男性颜色
+#### type=11: mancolor — 男性颜色
 
 ```json
 { "type": 11, "args": ["body", "0", "_Color", "200", "150", "100"] }
@@ -494,7 +494,7 @@ mancolor
 
 ---
 
-### type=12: maskitem — 遮罩物品
+#### type=12: maskitem — 遮罩物品
 
 ```json
 { "type": 12, "args": ["chikubi"] }
@@ -515,7 +515,7 @@ maskitem
 
 ---
 
-### type=13: node消去 — 隐藏节点
+#### type=13: node消去 — 隐藏节点
 
 ```json
 {"type": 13, "args": ["ForeTwist5"]}
@@ -536,7 +536,7 @@ node消去
 
 ---
 
-### type=14: node表示 — 显示节点
+#### type=14: node表示 — 显示节点
 
 ```json
 { "type": 14, "args": ["节点名"] }
@@ -553,7 +553,7 @@ node表示
 
 ---
 
-### type=15: nofloory — 禁地面碰撞
+#### type=15: nofloory — 禁地面碰撞
 
 ```json
 { "type": 15, "args": ["标志", "shoes"] }
@@ -576,7 +576,7 @@ nofloory
 
 ---
 
-### type=16: param2 — 第二参数
+#### type=16: param2 — 第二参数
 
 ```json
 { "type": 16, "args": ["wear", "参数名", "参数值"] }
@@ -599,7 +599,7 @@ param2
 
 ---
 
-### type=17: paramset — 参数集
+#### type=17: paramset — 参数集
 
 ```json
 { "type": 17, "args": ["参数集名", "键1", "值1", "键2", "值2"] }
@@ -624,7 +624,7 @@ paramset
 
 ---
 
-### type=18: prop — 属性设置
+#### type=18: prop — 属性设置
 
 ```json
 { "type": 18, "args": ["EyeBallSclX", "48"] }
@@ -647,7 +647,7 @@ prop
 
 ---
 
-### type=19: saveitem — 保存物品
+#### type=19: saveitem — 保存物品
 
 ```json
 { "type": 19, "args": [] }
@@ -665,7 +665,7 @@ saveitem
 
 ---
 
-### type=20: set — 设置
+#### type=20: set — 设置
 
 ```json
 { "type": 20, "args": ["参数名", "值"] }
@@ -683,7 +683,7 @@ set
 
 ---
 
-### type=21: setname — 设置名称
+#### type=21: setname — 设置名称
 
 ```json
 { "type": 21, "args": ["名称"] }
@@ -700,7 +700,7 @@ setname
 
 ---
 
-### type=22: setslotitem — 设置槽位物品
+#### type=22: setslotitem — 设置槽位物品
 
 ```json
 { "type": 22, "args": ["acchead", "12345"] }
@@ -723,7 +723,7 @@ setslotitem
 
 ---
 
-### type=23: shader — 着色器变更
+#### type=23: shader — 着色器变更
 
 ```json
 { "type": 23, "args": ["wear", "0", "shader_name"] }
@@ -746,7 +746,7 @@ shader
 
 ---
 
-### type=24: tex — 纹理变更
+#### type=24: tex — 纹理变更
 
 ```json
 {
@@ -808,7 +808,7 @@ tex
 
 ---
 
-### type=25: useredit — 用户编辑
+#### type=25: useredit — 用户编辑
 
 ```json
 {
@@ -859,7 +859,7 @@ useredit
 
 ---
 
-### type=26: ver — 版本号
+#### type=26: ver — 版本号
 
 ```json
 { "type": 26, "args": ["200"] }
@@ -880,7 +880,7 @@ ver
 
 ---
 
-### type=27: アイテム — 引用子菜单
+#### type=27: アイテム — 引用子菜单
 
 ```json
 {"type": 27, "args": ["xxx_i_.menu"]}
@@ -905,7 +905,7 @@ ver
 
 ---
 
-### type=28: アイテムパラメータ — 物品参数
+#### type=28: アイテムパラメータ — 物品参数
 
 ```json
 { "type": 28, "args": ["wear", "参数名", "参数值"] }
@@ -926,7 +926,7 @@ ver
 
 ---
 
-### type=29: アイテム条件 — 物品条件
+#### type=29: アイテム条件 — 物品条件
 
 **格式1**: 检查是否有物品（`有る` / `無い` 两种判定）
 
@@ -1001,7 +1001,7 @@ ver
 
 ---
 
-### type=30: アタッチポイントの設定 — Attach 点设置
+#### type=30: アタッチポイントの設定 — Attach 点设置
 
 ```json
 {
@@ -1033,7 +1033,7 @@ ver
 
 ---
 
-### type=31: テクスチャセット合成 — 纹理集合成
+#### type=31: テクスチャセット合成 — 纹理集合成
 
 ```json
 {
@@ -1114,7 +1114,7 @@ ver
 
 ---
 
-### type=32: テクスチャ合成 — 纹理合成
+#### type=32: テクスチャ合成 — 纹理合成
 
 与 `テクスチャセット合成`（type=31）共享同一处理器，参数格式相同，但运行时不传递颜色参数（`infColParam=null`）。支持删除模式和非删除模式。
 
@@ -1169,7 +1169,7 @@ ver
 
 ---
 
-### type=33: テクスチャ乗算 — 纹理乘算
+#### type=33: テクスチャ乗算 — 纹理乘算
 
 ```json
 { "type": 33, "args": ["body", "0", "_MainTex", "100", "tex.tex", "Multiply"] }
@@ -1191,7 +1191,7 @@ ver
 
 ---
 
-### type=34: テクスチャ変更 — 纹理变更（tex 的别名）
+#### type=34: テクスチャ変更 — 纹理变更（tex 的别名）
 
 与 `tex`（type=24）完全相同的行为。
 
@@ -1207,7 +1207,7 @@ ver
 
 ---
 
-### type=35: パーツnode消去 — 零件节点隐藏
+#### type=35: パーツnode消去 — 零件节点隐藏
 
 ```json
 { "type": 35, "args": ["glove", "Kata"] }
@@ -1232,7 +1232,7 @@ ver
 
 ---
 
-### type=36: パーツnode表示 — 零件节点显示
+#### type=36: パーツnode表示 — 零件节点显示
 
 ```json
 { "type": 36, "args": ["glove", "Forearm"] }
@@ -1250,7 +1250,7 @@ ver
 
 ---
 
-### type=37: マテリアル変更 — 材质变更
+#### type=37: マテリアル変更 — 材质变更
 
 ```json
 { "type": 37, "args": ["accHead", "0", "crc_acchead003_1.mate"] }
@@ -1275,7 +1275,7 @@ ver
 
 ---
 
-### type=38: リソース参照 — 资源引用
+#### type=38: リソース参照 — 资源引用
 
 ```json
 { "type": 38, "args": ["半脱ぎ", "xxx_hadake_i_.menu"] }
@@ -1296,7 +1296,7 @@ ver
 
 ---
 
-### type=39: 半脱ぎ — 半脱衣
+#### type=39: 半脱ぎ — 半脱衣
 
 ```json
 { "type": 39, "args": ["xxx_hadake_i_.menu"] }
@@ -1317,7 +1317,7 @@ ver
 
 ---
 
-### type=40: delitemnewattach — 删除新 Attach 物品
+#### type=40: delitemnewattach — 删除新 Attach 物品
 
 ```json
 { "type": 40, "args": [] }
@@ -1333,7 +1333,7 @@ delitemnewattach
 
 ---
 
-### type=41: partcolor — 部件颜色
+#### type=41: partcolor — 部件颜色
 
 ```json
 {"type": 41, "args": ["SlotID", "材质编号", "UV属性名", "纹理名", "id1.tex&id2.tex", "ColorA", ...]}
@@ -1363,7 +1363,7 @@ partcolor
 
 ---
 
-### type=42: partcolordef — 部件颜色定义
+#### type=42: partcolordef — 部件颜色定义
 
 ```json
 {
@@ -1402,7 +1402,7 @@ partcolordef
 
 ---
 
-### type=43: pattern — 图案
+#### type=43: pattern — 图案
 
 ```json
 {"type": 43, "args": ["tex.tex", "MUGEN_COLOR"]}
@@ -1426,7 +1426,7 @@ pattern
 
 ---
 
-### type=44: material — 材质属性
+#### type=44: material — 材质属性
 
 ```json
 { "type": 44, "args": ["SlotID", "材质编号", "属性名", "属性类型", "属性值"] }
@@ -1455,7 +1455,7 @@ material
 
 ---
 
-### type=45: uv定義 — UV 定义
+#### type=45: uv定義 — UV 定义
 
 ```json
 { "type": 45, "args": ["head", "标签名", "0.5:0.3"] }
@@ -1478,7 +1478,7 @@ uv定義
 
 ---
 
-### type=46/47/48/66/68/69/70/71: 合成类命令
+#### type=46/47/48/66/68/69/70/71: 合成类命令
 
 统一格式：
 
@@ -1523,7 +1523,7 @@ uv定義
 
 ---
 
-### type=49: gradacolordef — 渐变色定义
+#### type=49: gradacolordef — 渐变色定义
 
 ```json
 {
@@ -1562,7 +1562,7 @@ gradacolordef
 
 ---
 
-### type=50: メイク合成 — 化妆合成
+#### type=50: メイク合成 — 化妆合成
 
 **添加模式参数**：
 
@@ -1639,7 +1639,7 @@ gradacolordef
 
 ---
 
-### type=51/52/53: ifdef / elseifdef / endifdef — 条件执行
+#### type=51/52/53: ifdef / elseifdef / endifdef — 条件执行
 
 ```json
 {"type": 51, "args": ["mpn", "==", "wear"]}
@@ -1677,7 +1677,7 @@ endifdef
 
 ---
 
-### type=54: mugencolordef — 无限色定义
+#### type=54: mugencolordef — 无限色定义
 
 ```json
 {
@@ -1707,7 +1707,7 @@ mugencolordef
 
 ---
 
-### type=55: partcolorrgb — 部件颜色(RGB)
+#### type=55: partcolorrgb — 部件颜色(RGB)
 
 ```json
 {
@@ -1752,7 +1752,7 @@ partcolorrgb
 
 ---
 
-### type=56: meshmorph — 网格变形
+#### type=56: meshmorph — 网格变形
 
 ```json
 { "type": 56, "args": ["パンツ", "PantsB3", "def=100"] }
@@ -1777,7 +1777,7 @@ meshmorph
 
 ---
 
-### type=57: マテリアル参照 — 材质引用
+#### type=57: マテリアル参照 — 材质引用
 
 ```json
 { "type": 57, "args": ["accUde_2", "0", "accUde", "0"] }
@@ -1804,7 +1804,7 @@ meshmorph
 
 ---
 
-### type=58: addbonemorph — 添加骨骼变形
+#### type=58: addbonemorph — 添加骨骼变形
 
 ```json
 {
@@ -1846,7 +1846,7 @@ addbonemorph
 
 ---
 
-### type=59: 乳首 — 乳头状态
+#### type=59: 乳首 — 乳头状态
 
 ```json
 { "type": 59, "args": ["状態"] }
@@ -1867,7 +1867,7 @@ addbonemorph
 
 ---
 
-### type=60: adjcutoff — Cutout 调整
+#### type=60: adjcutoff — Cutout 调整
 
 ```json
 {
@@ -1899,7 +1899,7 @@ adjcutoff
 
 ---
 
-### type=61: parthidemove — 部件隐藏/移动
+#### type=61: parthidemove — 部件隐藏/移动
 
 ```json
 {"type": 61, "args": ["C", "MOVE&HIDE", "TYPE_SLOT_VISIBLE", "accHead"]}
@@ -1926,7 +1926,7 @@ parthidemove
 
 ---
 
-### type=62: 房tex — 发束纹理
+#### type=62: 房tex — 发束纹理
 
 ```json
 {
@@ -1966,7 +1966,7 @@ parthidemove
 
 ---
 
-### type=63: munekagergb — 胸阴影(RGB)
+#### type=63: munekagergb — 胸阴影(RGB)
 
 ```json
 {
@@ -2005,7 +2005,7 @@ munekagergb
 
 ---
 
-### type=64: mask消去 — 遮罩删除
+#### type=64: mask消去 — 遮罩删除
 
 ```json
 { "type": 64, "args": ["onepiece", "mask.tex"] }
@@ -2026,7 +2026,7 @@ mask消去
 
 ---
 
-### type=65: munekage — 胸阴影
+#### type=65: munekage — 胸阴影
 
 ```json
 { "type": 65, "args": ["bra", "0", "_MainTex", "shadow.tex", "Alpha"] }
@@ -2047,7 +2047,7 @@ munekage
 
 ---
 
-### type=67: ちんこ — 男性器官状态
+#### type=67: ちんこ — 男性器官状态
 
 ```json
 { "type": 67, "args": ["状態"] }
@@ -2068,7 +2068,7 @@ munekage
 
 ---
 
-### type=72: cutout消去 — Cutout 删除
+#### type=72: cutout消去 — Cutout 删除
 
 ```json
 { "type": 72, "args": ["SlotID", "纹理名"] }
@@ -2089,7 +2089,7 @@ cutout消去
 
 ---
 
-### type=73: タッチ範囲tex — 触摸范围纹理
+#### type=73: タッチ範囲tex — 触摸范围纹理
 
 ```json
 { "type": 73, "args": ["SlotID", "材质编号", "纹理名"] }
@@ -2227,7 +2227,7 @@ cutout消去
 
 #### A. 基础元数据
 
-##### `itemName`（Key 4，string）
+#### `itemName`（Key 4，string）
 
 ```json
 "itemName": "スリーズ"
@@ -2241,7 +2241,9 @@ cutout消去
   - 日语显示时默认**截断第一个空格（含全角 U+3000）之后的内容**——
     想让全名显示出来，就别在名字中间放空格。
 
-##### `categoryText`（Key 13，string）
+---
+
+#### `categoryText`（Key 13，string）
 
 ```json
 "categoryText": "wear"
@@ -2257,7 +2259,9 @@ cutout消去
   - `MPN.set_maidwear ~ MPN.set_face` 区间会被判定为「套装数据」；
   - `腹揺れ対応` 未指定时，按 `category` 查默认表。
 
-##### `infoText`（Key 6，string）
+---
+
+#### `infoText`（Key 6，string）
 
 ```json
 "infoText": "点々とあるハイライト。"
@@ -2267,7 +2271,9 @@ cutout消去
   （且该路径已弃用），字段里存的应该已经是真正的换行符。
 - **作用**【证实】：编辑界面信息面板显示；本地化 Term 路径 `<category>/<文件名>|info`。
 
-##### `icon` / `icons` → `iconFileName`（Key 5，string）
+---
+
+#### `icon` / `icons` → `iconFileName`（Key 5，string）
 
 ```json
 "iconFileName": "_i_skinhi008"
@@ -2279,6 +2285,8 @@ cutout消去
   再失败才尝试从 Texture2D 造 Sprite，最后打 `画像[xxx]の読み込みに失敗しました` 警告。
   所以填 `xxx.tex` 会先去找 `xxx.tex.tex`，白白多一次失败。
 - **作用**：编辑界面道具按钮图标。
+
+---
 
 ##### `priority`（Key 7，int）
 
@@ -2294,7 +2302,7 @@ cutout消去
 
 #### B. 菜单行为类
 
-##### `isDelete`（Key 11，bool）
+#### `isDelete`（Key 11，bool）
 
 ```json
 "isDelete": true
@@ -2311,7 +2319,9 @@ cutout消去
   - 旧数据（`version < 1003`）转换时，`isDelete` 菜单强制 `targetBodyType = None`、
     `attribute = WomanReccomend | ManReccomend`。
 
-##### `targetBodyType`（Key 23，int）+ `attribute`（Key 25，ulong）
+---
+
+#### `targetBodyType`（Key 23，int）+ `attribute`（Key 25，ulong）
 
 ```json
 "targetBodyType": 2,
@@ -2337,7 +2347,9 @@ Man = 2    仅男性
   - 运行时随 `additem` 传给 `TBody.AddItem(..., targetBodyType, skirt_phys)`，
     影响模型加载分支。
 
-##### `attribute`（Key 25，ulong flags）
+---
+
+#### `attribute`（Key 25，ulong flags）
 
 ```json
 "attribute": 12
@@ -2345,21 +2357,23 @@ Man = 2    仅男性
 
 `Menu.Attribute`（`[Flags] ulong`）：
 
-|  值 | 名称                | 作用（消费点）                                                                |
-| --: | ------------------- | ----------------------------------------------------------------------------- |
-|   0 | `None`              | 无                                                                            |
-|   1 | `WomanReccomend`    | 「女性推荐」过滤                                                              |
-|   2 | `ManReccomend`      | 「男性推荐」过滤                                                              |
-|   4 | `ManSuits`          | 男性西装分类过滤                                                              |
-|   8 | `NoExpressionFace`  | 隐藏表情相关面板/控件                                                         |
-|  16 | `NoMoveTatooHokuro` | 禁用纹身/痣的位置编辑                                                         |
+|  值 | 名称                | 作用（消费点）        |
+| --: | ------------------- | --------------------- |
+|   0 | `None`              | 无                    |
+|   1 | `WomanReccomend`    | 「女性推荐」过滤      |
+|   2 | `ManReccomend`      | 「男性推荐」过滤      |
+|   4 | `ManSuits`          | 男性西装分类过滤      |
+|   8 | `NoExpressionFace`  | 隐藏表情相关面板/控件 |
+|  16 | `NoMoveTatooHokuro` | 禁用纹身/痣的位置编辑 |
 
 - **填写**：**按位或后的整数**。例：`ManSuits | NoExpressionFace` = 4 + 8 = **12**。
 - **过滤语义**【证实】：`MenuAttributeFilter` 用的是 `menu.attribute.HasFlag(filterAttribute)`，
   即**菜单必须包含筛选位才被选中**；筛选条件为 `None` 时全部通过。
 - `NoExpressionFace` 的消费点很多。
 
-##### `toeLockSlotId`（Key 27，string）
+---
+
+#### `toeLockSlotId`（Key 27，string）
 
 ```json
 "toeLockSlotId": "shoes"
@@ -2372,7 +2386,9 @@ Man = 2    仅男性
   该槽可见且动画播放时，脚趾骨骼每帧被锁回初始旋转，
   用于鞋类防止动画中脚趾穿模。典型值 `"shoes"`。
 
-##### `isHarayureAvailable`（Key 29，int）
+---
+
+#### `isHarayureAvailable`（Key 29，int）
 
 ```json
 "isHarayureAvailable": 1
@@ -2393,7 +2409,9 @@ Man = 2    仅男性
   `mizugi_top`/`mizugi_buttom`/`bra`/`panz`/`stkg`/`glove`/`shoes`/各 acc 类等），
   命中则允许、未命中则禁止。
 
-##### `skirt_phys`（Key 30，int）
+---
+
+#### `skirt_phys`（Key 30，int）
 
 ```json
 "skirt_phys": 1
@@ -2405,11 +2423,9 @@ Man = 2    仅男性
   `DynamicBoneMgr` 用 `m_skirt_phys_ver == 2`（或模型名含 `crc2_`）来切换裙子物理处理分支。
   即 **2 = 新版裙子物理**。
 
----
-
 #### C. 颜色系统类
 
-##### `defineTagNames`（Key 15，ulong flags）
+#### `defineTagNames`（Key 15，ulong flags）
 
 ```json
 "defineTagNames": 2
@@ -2436,7 +2452,9 @@ Man = 2    仅男性
   「このメニューには#define定義がありますが実行時の指定がありませんでした。」）。
   本字段只管编辑 UI 是否给你开颜色面板。
 
-##### `colorSetText`（Key 14，string）
+---
+
+#### `colorSetText`（Key 14，string）
 
 ```json
 "colorSetText": "null_mpn"
@@ -2447,7 +2465,9 @@ Man = 2    仅男性
   与旧版导入赋值之外，找不到任何读取点。
   可安全填 `"null_mpn"`。
 
-##### `colvariFileNameExp`（Key 17，string）
+---
+
+#### `colvariFileNameExp`（Key 17，string）
 
 ```json
 "colvariFileNameExp": "crc_haircolor_color_.*._i_.menu"
@@ -2473,7 +2493,9 @@ Man = 2    仅男性
 
 - **作用**：决定该菜单的「系统颜色预设」列表由哪些菜单文件构成。
 
-##### `colvariInfo`（Key 18，`Menu.Colvari` 对象）
+---
+
+#### `colvariInfo`（Key 18，`Menu.Colvari` 对象）
 
 结构见 **2.6 复杂结构定义**。这里说填写要点：
 
@@ -2489,7 +2511,9 @@ Man = 2    仅男性
 - `layerName` 必须与 `tex`（type=24）/`テクスチャセット合成`（type=31）里写的 **`saveLayerTag` 完全一致**——
   两边都是 `prop.savedTexDatas` 字典的键。**拼错就静默不生效**。
 
-##### `colvariInfo.iconFileName` / `colreqdefine` → `colvariInfo.reqDefine`
+---
+
+#### `colvariInfo.iconFileName` / `colvariInfo.reqDefine`
 
 - `iconFileName`：string（Key 2）；`iconColor`：**`MaidInfinityColor.PartsColor` 结构体**（Key 1，不是颜色名字符串）；
   `reqDefine`：string（Key 3）。
@@ -2615,7 +2639,7 @@ Man = 2    仅男性
 
 #### E. 编辑器与版本类
 
-##### `partsVer`（Key 21，`Tuple<string,int>`）
+#### `partsVer`（Key 21，`Tuple<string,int>`）
 
 ```json
 "partsVer": ["KCES2", 1000]
@@ -2626,11 +2650,11 @@ Man = 2    仅男性
 - **`Item1`（字符串）游戏侧完全不读**，只有 `Item2`（整数）参与判定。
 - **`Item2` 的分档**【证实】：
 
-  | 范围           | 判定                                                                                                                      |
-  | -------------- | ------------------------------------------------------------------------------------------------------------------------- |
-  | `null` 或 <300 | `partsType = Kces1`                                                                                                       |
-  | 100 ~ 199      | `hairPartsType = Com3D2OldHair`                                                                                           |
-  | ≥ 300          | `partsType = Kces2`、`hairPartsType = Kces2Hair`；`KCESItemFilter.IsCrcItem(menu) == true`                                |
+  | 范围           | 判定                                                                                       |
+  | -------------- | ------------------------------------------------------------------------------------------ |
+  | `null` 或 <300 | `partsType = Kces1`                                                                        |
+  | 100 ~ 199      | `hairPartsType = Com3D2OldHair`                                                            |
+  | ≥ 300          | `partsType = Kces2`、`hairPartsType = Kces2Hair`；`KCESItemFilter.IsCrcItem(menu) == true` |
 
 - 另外发型化妆会比对 `partsVer.Item2` 与导出时记录的材质版本（写入 `materialPerOriginalMenuVersion`）。
 - ⚠️ `partsVer == null` 时会直接取 `.Item2` →
@@ -2638,7 +2662,9 @@ Man = 2    仅男性
 - **不要与运行时命令 `ver`（type=26）混淆**：那条在 `commandList` 里，控制 `TBodySkin.m_partsVersion`；
   本字段是菜单级元数据。
 
-##### `hideInEdit`（Key 26，bool）
+---
+
+#### `hideInEdit`（Key 26，bool）
 
 ```json
 "hideInEdit": true
@@ -2649,7 +2675,9 @@ Man = 2    仅男性
   用于隐藏「只被别的菜单通过 `アイテム` 引用的内部菜单」，
   使它们不出现在玩家的道具列表里，但仍可被引用执行。
 
-##### `exportModelFormTextureName`（Key 28，string）
+---
+
+#### `exportModelFormTextureName`（Key 28，string）
 
 ```json
 "exportModelFormTextureName": "crc_hairf001_form.tex"
@@ -2664,10 +2692,10 @@ Man = 2    仅男性
 
 ##### `メニューフォルダ` 与 `filter` —— 两个「填了也没用」的命令
 
-| 命令               | KCES2 中的状态                                                                                                                                                                                  |
-| ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `メニューフォルダ` | `Menu` 对象**没有对应字段**。旧版编译器用它做资源定位与必填校验，KCES2 里无处安放，**无需填写**。                                                                                               |
-| `filter`           | 同样**没有字段、没有消费点**。注意它与 `.partsfilter` 文件系统**是两回事**——后者是独立的资源过滤机制，不由 menu 字段驱动。**无需填写**。                                                        |
+| 命令               | KCES2 中的状态                                                                                                                           |
+| ------------------ | ---------------------------------------------------------------------------------------------------------------------------------------- |
+| `メニューフォルダ` | `Menu` 对象**没有对应字段**。旧版编译器用它做资源定位与必填校验，KCES2 里无处安放，**无需填写**。                                        |
+| `filter`           | 同样**没有字段、没有消费点**。注意它与 `.partsfilter` 文件系统**是两回事**——后者是独立的资源过滤机制，不由 menu 字段驱动。**无需填写**。 |
 
 ### 2.6 复杂结构定义
 
@@ -2681,44 +2709,50 @@ Man = 2    仅男性
 |  3  | `reqDefine`    | string                         | 【无消费】               |
 |  4  | `colvariDatas` | `List<Colvari.ColvariData>`    | **实际起作用的变体数据** |
 
+---
+
 #### `Menu.Colvari.ColvariData`
 
-| Key | 字段                      | 类型                                    | 填写说明                                                                                                          |
-| :-: | ------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
-|  0  | `version`                 | int                                     | 填 **1000**                                                                                                       |
-|  1  | `mpn`                     | string                                  | MPN 名；`\|` 分隔多个（执行侧逐个生效）；`&` 仅 UI 侧（见 2.5-C 警告）                                            |
-|  2  | `layerName`               | string                                  | **必须等于 tex/合成命令里的 `saveLayerTag`**                                                                      |
-|  3  | `colorType`               | `InfColData.COLOR_TYPE`（int）          | `0`=NONE `1`=INF_COLOR `2`=PART_COLOR `3`=GRADA_COLOR                                                             |
-|  4  | `maskData`                | `TexLay.MaskData[]`                     | 遮罩开关数组                                                                                                      |
-|  5  | `alpha`                   | float                                   | 写入 `savedTexData.savedMulAlpha`                                                                                 |
-|  6  | `colData`                 | `MaidInfinityColor.PartsColor`          | `colorType == INF_COLOR` 时生效                                                                                   |
-|  7  | `partColDefs`             | `List<InfinityColorTexMgr2.PartColDef>` | `colorType == PART_COLOR` 时生效                                                                                  |
-|  8  | `gradaColDef`             | `InfinityColorTexMgr2.GradaColDef`      | `colorType == GRADA_COLOR` 时生效                                                                                 |
-|  9  | `mamaFileName`            | string                                  | 【无消费】                                                                                                        |
-| 10  | `colorTypeSub`            | `InfColData.COLOR_TYPE`（int）          | `GRADA_COLOR` 且此项 = `INF_COLOR(1)` 时 → `gradaIsMugen = true` |
-| 11  | `useType`                 | `UseType`（byte flags）                 | `1`=ALPHA `2`=COLOR，可组合 → `3` = 同时生效                                                                      |
-| 12  | `saveInfColDataLinkLayer` | string                                  | 非 null 时**复用另一层的 `savedInfColData`**                                                                      |
-| 13  | `viewName`                | string                                  | UI 显示名，会走本地化 `SceneEditUI/DetailSettingSlider/<viewName>`                                                |
+| Key | 字段                      | 类型                                    | 填写说明                                                               |
+| :-: | ------------------------- | --------------------------------------- | ---------------------------------------------------------------------- |
+|  0  | `version`                 | int                                     | 填 **1000**                                                            |
+|  1  | `mpn`                     | string                                  | MPN 名；`\|` 分隔多个（执行侧逐个生效）；`&` 仅 UI 侧（见 2.5-C 警告） |
+|  2  | `layerName`               | string                                  | **必须等于 tex/合成命令里的 `saveLayerTag`**                           |
+|  3  | `colorType`               | `InfColData.COLOR_TYPE`（int）          | `0`=NONE `1`=INF_COLOR `2`=PART_COLOR `3`=GRADA_COLOR                  |
+|  4  | `maskData`                | `TexLay.MaskData[]`                     | 遮罩开关数组                                                           |
+|  5  | `alpha`                   | float                                   | 写入 `savedTexData.savedMulAlpha`                                      |
+|  6  | `colData`                 | `MaidInfinityColor.PartsColor`          | `colorType == INF_COLOR` 时生效                                        |
+|  7  | `partColDefs`             | `List<InfinityColorTexMgr2.PartColDef>` | `colorType == PART_COLOR` 时生效                                       |
+|  8  | `gradaColDef`             | `InfinityColorTexMgr2.GradaColDef`      | `colorType == GRADA_COLOR` 时生效                                      |
+|  9  | `mamaFileName`            | string                                  | 【无消费】                                                             |
+| 10  | `colorTypeSub`            | `InfColData.COLOR_TYPE`（int）          | `GRADA_COLOR` 且此项 = `INF_COLOR(1)` 时 → `gradaIsMugen = true`       |
+| 11  | `useType`                 | `UseType`（byte flags）                 | `1`=ALPHA `2`=COLOR，可组合 → `3` = 同时生效                           |
+| 12  | `saveInfColDataLinkLayer` | string                                  | 非 null 时**复用另一层的 `savedInfColData`**                           |
+| 13  | `viewName`                | string                                  | UI 显示名，会走本地化 `SceneEditUI/DetailSettingSlider/<viewName>`     |
 
 > `useType` 的作用【证实】：只有含 `COLOR(2)` 才写颜色，只有含 `ALPHA(1)` 才写 alpha。
 > UI 侧据此把颜色包分成
 > `ColorAndAlpha` / `OnlyColor` / `OnlyAlpha` 三型。
 
+---
+
 #### `Menu.PreMulTexDatas`
 
 字段表见 2.5-D。
 
+---
+
 #### `Menu.HairMake`（**无对应编译时命令**）
 
-| Key | 字段                              | 类型     | 说明                                               |
-| :-: | --------------------------------- | -------- | -------------------------------------------------- |
-|  0  | `version`                         | int      | 填 **1001**                                        |
-|  1  | `exportedGuid`                    | string   | 导出源 GUID                                        |
-|  2  | `exporedHairBuildVer`             | int      | 导出时写 `13600`                                   |
-|  3  | `exporedHairGameVer`              | int      | `Product.GameVersion`                              |
-|  4  | `suspendedSaveFileName`           | string   | version ≤1000 时会被迁移到下一字段                 |
-|  5  | `materialPerOriginalMenuFileName` | string[] | 各材质来源菜单文件名                               |
-|  6  | `materialPerOriginalMenuVersion`  | int[]    | 对应菜单的 `partsVer.Item2`                        |
+| Key | 字段                              | 类型     | 说明                               |
+| :-: | --------------------------------- | -------- | ---------------------------------- |
+|  0  | `version`                         | int      | 填 **1001**                        |
+|  1  | `exportedGuid`                    | string   | 导出源 GUID                        |
+|  2  | `exporedHairBuildVer`             | int      | 导出时写 `13600`                   |
+|  3  | `exporedHairGameVer`              | int      | `Product.GameVersion`              |
+|  4  | `suspendedSaveFileName`           | string   | version ≤1000 时会被迁移到下一字段 |
+|  5  | `materialPerOriginalMenuFileName` | string[] | 各材质来源菜单文件名               |
+|  6  | `materialPerOriginalMenuVersion`  | int[]    | 对应菜单的 `partsVer.Item2`        |
 
 - 由发型化妆导出流程整体写入，**手写菜单不要填**（填 `null`）。
 - `menu.isImportedHair` 就是判断 `hairMake != null`。
@@ -2765,14 +2799,14 @@ Man = 2    仅男性
 
 **`TexLay.MaskParam`**：
 
-| Key | 字段                | 类型         | 说明                                                                         |
-| :-: | ------------------- | ------------ | ---------------------------------------------------------------------------- |
-|  0  | `maskData`          | `MaskData[]` | 各遮罩开关                                                                   |
-|  1  | `maskTexName`       | string       | 遮罩纹理名                                                                   |
-|  2  | `maskRanges`        | Vector4[]    | 各遮罩范围，传给 shader 的 `_MaskRange`                                      |
-|  3  | `linkMaskName`      | string       | 非空时**复用该层的 `savedMaskData`**                                         |
-|  4  | `linkMaskNo`        | int          |                                                                              |
-|  5  | `shareRtTargetPart` | string       | 非空时与该部件共享 RenderTexture                                             |
+| Key | 字段                | 类型         | 说明                                    |
+| :-: | ------------------- | ------------ | --------------------------------------- |
+|  0  | `maskData`          | `MaskData[]` | 各遮罩开关                              |
+|  1  | `maskTexName`       | string       | 遮罩纹理名                              |
+|  2  | `maskRanges`        | Vector4[]    | 各遮罩范围，传给 shader 的 `_MaskRange` |
+|  3  | `linkMaskName`      | string       | 非空时**复用该层的 `savedMaskData`**    |
+|  4  | `linkMaskNo`        | int          |                                         |
+|  5  | `shareRtTargetPart` | string       | 非空时与该部件共享 RenderTexture        |
 
 **`TexLay.MaskData`**：`Key(0) name`（string）、`Key(1) mask`（bool，`true`＝遮住）。
 
@@ -2808,7 +2842,7 @@ Man = 2    仅男性
 
 这几个字段没有对应的 `CompileType`，但填错会直接导致菜单不可用。
 
-##### `version`（Key 0）—— **建议填 1005**
+#### `version`（Key 0）—— **建议填 1005**
 
 ```json
 "version": 1005
@@ -2822,7 +2856,9 @@ Man = 2    仅男性
     `MPN[xxx]のCRES2変換データがありません`。
 - 所以**填小于 1003 的版本号 = 你设的性别/属性会被静默丢弃**。
 
-##### `id`（Key 2）—— **文件名的 FNV-1a 64 位哈希**
+---
+
+#### `id`（Key 2）—— **文件名的 FNV-1a 64 位哈希**
 
 ```json
 "fileName": "cm3d2_skinhi008.menu",
@@ -2842,22 +2878,29 @@ Man = 2    仅男性
   父菜单文件名的推导规则（`_z<编号>` 系列）见 `Menu.GetParentMenuFileName`，
   且只对 `MPN.wear ~ MPN.accAcc24` 与 `MPN.set_maidwear ~ MPN.set_face` 区间生效。
 
-##### `fileName`（Key 3）
+---
 
-- **全小写、含 `.menu`**。它同时决定本地化 Term 路径（取不含扩展名的部分）
-  与 `id`/`parentId` 的哈希输入。
+#### `fileName`（Key 3）
 
-##### `guid`（Key 1）
+- **全小写、含 `.menu`**。它同时决定本地化 Term 路径（取不含扩展名的部分）与 `id`/`parentId` 的哈希输入。
+
+---
+
+#### `guid`（Key 1）
 
 - ulong。除发型化妆导出会写 `AssetManager.GetHashIgnoreCase(hairMake.exportedGuid)` 外，
   **游戏侧找不到其它读取点**（`IPartsData.guid` 只是接口暴露，无实际消费者）。
 
-##### `isDiff`（Key 10，bool）
+---
+
+#### `isDiff`（Key 10，bool）
 
 - **作用**【证实】：与 `hideInEdit` 同等待遇——`!menu.isDiff && !menu.hideInEdit` 才进编辑列表。
 - 【旧版路径】文件名含 `_zurashi` / `_mekure` 会自动置位；KCES2 直接填字段。
 
-##### `srcFileHashCRC32`（Key 19）/ `defineFirst`（Key 20）/ `isMan`（Key 9）/ `isRecommendMan`（Key 22）
+---
+
+#### `srcFileHashCRC32`（Key 19）/ `defineFirst`（Key 20）/ `isMan`（Key 9）/ `isRecommendMan`（Key 22）
 
 - **全部【无消费】**。`isMan` / `isRecommendMan` 是被 `targetBodyType` / `attribute` 取代的遗留私有字段；
   `srcFileHashCRC32` 推测供编辑器检测源文件变更；`defineFirst` 游戏侧无任何读取点。
