@@ -257,7 +257,7 @@ blendset
 | args[3-5] |  ✅  | 最小值增量 (x, y, z)                                                          |
 | args[6-8] |  ✅  | 最大值增量 (x, y, z)                                                          |
 
-> 注意：两组向量是**相对骨骼当前 local 变换的增量**而非绝对值（`m_vAddMin = trBone.localPosition + f_fAddMin`，`TMorphBone.cs:329-357`）。属性名与骨骼名同时参与 `Find` 匹配，任一不符则找不到目标、静默无效。8 参数格式下 args[0] 是属性名、args[1] 是骨骼名（`ChangeMorphPosValue(args[0], args[1], …)`），不是「骨骼名 + 变形名」。
+> 注意：两组向量是**相对骨骼当前 local 变换的增量**而非绝对值。属性名与骨骼名同时参与 `Find` 匹配，任一不符则找不到目标、静默无效。8 参数格式下 args[0] 是属性名、args[1] 是骨骼名（`ChangeMorphPosValue(args[0], args[1], …)`），不是「骨骼名 + 变形名」。
 
 **编辑器命令示例**（8 参数格式）：
 
@@ -504,7 +504,7 @@ mancolor
 | ------- | :--: | ------------------------------------------------ |
 | args[0] |  ✅  | 作为遮罩的槽位名（`TBody.SlotID`，如 `chikubi`） |
 
-将当前菜单 category 对应的槽位添加遮罩（`AddMask(category, args[0])`）。args[0] 必须是槽位名（存在于 `TBody.hashSlotName`，`TBody.cs:1646-1655`），纹理/材质名会被静默忽略。
+将当前菜单 category 对应的槽位添加遮罩（`AddMask(category, args[0])`）。args[0] 必须是槽位名（存在于 `TBody.hashSlotName`），纹理/材质名会被静默忽略。
 
 **编辑器命令示例**：
 
@@ -635,7 +635,7 @@ paramset
 | args[0] |  ✅  | MPN 枚举值（**区分大小写**，如 `EyeBallSclX`） |
 | args[1] |  ✅  | 编号（整数，写入该属性的值，受 min/max 截断）  |
 
-> 注意：与其它命令的 MPN 解析（`Parse.TryParse`，大小写不敏感）不同，此路径走 `Maid.SetProp(string,int)` 内的 `Enum.Parse(MPN)`（`Maid.cs:638`），**大小写敏感**，写错会抛异常并落到 `null_mpn`。
+> 注意：与其它命令的 MPN 解析（`Parse.TryParse`，大小写不敏感）不同，此路径走 `Maid.SetProp(string,int)` 内的 `Enum.Parse(MPN)`，**大小写敏感**，写错会抛异常并落到 `null_mpn`。
 
 **编辑器命令示例**：
 
@@ -835,7 +835,7 @@ tex
 | args[5] |  ✅  | 属性类型，仅识别 `DEFINE` / `TEX_OFFSET` / `TEX_SCALE` / `Color` 四个关键字，**其它任何写法一律按 `SetFloat` 处理** |
 | args[6] |  ✅  | 属性值                                                                                                              |
 
-属性类型的实际行为（`MaterialMgr.SetMaterialProperty`，`MaterialMgr.cs:1465-1515`）：
+属性类型的实际行为：
 
 - `DEFINE`：值为 `0` 时 `DisableKeyword(属性名)`，为 `1` 时 `EnableKeyword(属性名)`
 - `TEX_OFFSET` / `TEX_SCALE`：值写作 `u:v`，调用 `SetTextureOffset` / `SetTextureScale`
@@ -913,7 +913,7 @@ ver
 
 恰好 3 个参数。在所有其他命令执行完后统一设置。
 
-> 注意：此命令的枚举名为 `アイテムパラメータ`（`Menu.cs:546` 写作 `アイテムパラメータ`，即长音符在「メ」与「タ」之间，末尾**不带**长音）。`アイテム条件`（type=29）格式 3 的固定 token `のアイテムパラメータの`（源码硬编码比较，`PartsMenuManager.cs:496`）与之拼写一致。
+> 注意：此命令的枚举名为 `アイテムパラメータ`（长音符在「メ」与「タ」之间，末尾**不带**长音）。`アイテム条件`（type=29）格式 3 的固定 token `のアイテムパラメータの`（源码硬编码比较）与之拼写一致。
 
 **编辑器命令示例**：
 
@@ -1175,7 +1175,7 @@ ver
 { "type": 33, "args": ["body", "0", "_MainTex", "100", "tex.tex", "Multiply"] }
 ```
 
-> ⚠️ **注意**：在 `PartsMenuManager.Exec()` 中 **无运行时处理器**，执行时被静默忽略。`Exec()` 中的纹理合成条件（`:1021`）仅匹配 `テクスチャ合成` 和 `テクスチャセット合成`，不包含 `テクスチャ乗算`。全代码库搜索 `テクスチャ乗算` 仅命中枚举定义（`Menu.cs:551`）一处。此命令在当前版本不生效。
+> ⚠️ **注意**：在 `PartsMenuManager.Exec()` 中 **无运行时处理器**，执行时被静默忽略。`Exec()` 中的纹理合成条件仅匹配 `テクスチャ合成` 和 `テクスチャセット合成`，不包含 `テクスチャ乗算`。全代码库搜索 `テクスチャ乗算` 仅命中枚举定义一处。此命令在当前版本不生效。
 
 **编辑器命令示例**：
 
@@ -1220,7 +1220,7 @@ ver
 | args[1]  |  ✅  | 节点/骨骼匹配名（`IndexOf` 部分匹配，`_ALL_` = 全部）                   |
 | args[2+] | 可选 | `slot=<SlotID>`（执行命令的物品所在槽，默认使用当前 category）          |
 
-> 注意：执行命令的物品所在槽**不是** args[0]，而是通过可选的 `slot=xxx` 参数指定，未指定时使用当前菜单的 category。源码行为：args[0] 是被遮蔽部件所在的**目标槽位名**（写入 `m_dicDelNodeParts` 字典的键，读取侧以其它槽的 `Category` 查询，`TBody.cs:2338-2358`）；args[1] 才是节点/骨骼名——在自身物品的节点树中做 `IndexOf` 部分匹配，命中的节点名用于隐藏目标槽中同名骨骼（`TBodySkin.cs:883-907`）。因此 args[0] 写成非槽位名（如旧式 `パーツnode消去 Kata glove`）时该条永不命中、完全无效；KCES 中应写为 `パーツnode消去 glove Kata`。
+> 注意：执行命令的物品所在槽**不是** args[0]，而是通过可选的 `slot=xxx` 参数指定，未指定时使用当前菜单的 category。源码行为：args[0] 是被遮蔽部件所在的**目标槽位名**（写入 `m_dicDelNodeParts` 字典的键，读取侧以其它槽的 `Category` 查询）；args[1] 才是节点/骨骼名——在自身物品的节点树中做 `IndexOf` 部分匹配，命中的节点名用于隐藏目标槽中同名骨骼。因此 args[0] 写成非槽位名（如旧式 `パーツnode消去 Kata glove`）时该条永不命中、完全无效；KCES 中应写为 `パーツnode消去 glove Kata`。
 
 **编辑器命令示例**：
 
@@ -1790,7 +1790,7 @@ meshmorph
 | args[2] |  ✅  | 提供方 SlotID（材质的来源）       |
 | args[3] |  ✅  | 提供方材质编号                    |
 
-> 注意：方向是 args[0] ← args[2]。源码签名为 `ShareMaterial(slotNameTo=args[0], subPropNo, matNoTo=args[1], slotNameFrom=args[2], matNoFrom=args[3])`（`TBody.cs:2097`），即前两个参数是被改写的一方、后两个才是来源。上例表示 `accUde_2` 借用 `accUde` 的材质实例，从而颜色与纹理自动联动。
+> 注意：方向是 args[0] ← args[2]。源码签名为 `ShareMaterial(slotNameTo=args[0], subPropNo, matNoTo=args[1], slotNameFrom=args[2], matNoFrom=args[3])`，即前两个参数是被改写的一方、后两个才是来源。上例表示 `accUde_2` 借用 `accUde` 的材质实例，从而颜色与纹理自动联动。
 
 **编辑器命令示例**：
 
@@ -1882,8 +1882,8 @@ addbonemorph
 | args[1]  |  ✅  | shader 上的**浮点属性名**（真实样本为 `_Cutoff`） |
 | args[2+] |  ✅  | `阈值[:形态名]`，按档位依次列出                   |
 
-> 注意：args[1] 是 shader 的 float 属性名而不是纹理名——源码 `SetCutoutMask(prop, matNo, propName, thresholds)` 最终执行 `m_materials[matNo].SetFloat(propName, 阈值)`（`MaterialMgr.cs:1374-1415`）。
-> 档位标签是**网格形态名**：切换到某一档时，游戏会把该档标签以 `靴下` Tag 加成 1.0（`TBody.UpdateCutoutMask`，`TBody.cs:1939-1960`），因此常用于丝袜的厚度/长度档。
+> 注意：args[1] 是 shader 的 float 属性名而不是纹理名——源码 `SetCutoutMask(prop, matNo, propName, thresholds)` 最终执行 `m_materials[matNo].SetFloat(propName, 阈值)`。
+> 档位标签是**网格形态名**：切换到某一档时，游戏会把该档标签以 `靴下` Tag 加成 1.0，因此常用于丝袜的厚度/长度档。
 > 作用槽位取自最近一次执行到的 `additem` 的 SlotID（本菜单无 `additem` 时为菜单的 category）。
 
 **编辑器命令示例**：
@@ -2101,7 +2101,7 @@ cutout消去
 | args[1] |  ✅  | 材质编号      |
 | args[2] |  ✅  | ID 纹理文件名 |
 
-> 注意：args[2] 是**触摸区域 ID 纹理**——源码走 `MaterialMgr.SetEditTouchAreaTex(matNo, fileName)` → `EditTouchAreaMgr.SetIdTex(fileName)`（`MaterialMgr.cs:276-284`），决定编辑界面点击模型时命中哪个部位。对同一材质重复设置时，先前的 ID 纹理会被释放。
+> 注意：args[2] 是**触摸区域 ID 纹理**——源码走 `MaterialMgr.SetEditTouchAreaTex(matNo, fileName)` → `EditTouchAreaMgr.SetIdTex(fileName)`，决定编辑界面点击模型时命中哪个部位。对同一材质重复设置时，先前的 ID 纹理会被释放。
 
 **编辑器命令示例**：
 
@@ -2235,10 +2235,10 @@ cutout消去
 
 - **填写**：任意字符串。旧版文本写法中含空格要加双引号，**填字段时不需要引号转义之外的处理**。
 - **作用**【证实】：
-  - 编辑界面按钮 / 列表显示名（`SlotMenuSelectButtonPanel.cs:284` 等）；
-  - 接入本地化：Term 路径固定为 `<category>/<文件名不含扩展名>|name`（`Menu.cs:28-34`），
-    `LocalizeManager.TryGetPartsTerm` 命中时优先显示译文（`Menu.GetItemNameTranslation`，`Menu.cs:147-167`）；
-  - 日语显示时默认**截断第一个空格（含全角 U+3000）之后的内容**（`Menu.cs:161-165`）——
+  - 编辑界面按钮 / 列表显示名；
+  - 接入本地化：Term 路径固定为 `<category>/<文件名不含扩展名>|name`，
+    `LocalizeManager.TryGetPartsTerm` 命中时优先显示译文；
+  - 日语显示时默认**截断第一个空格（含全角 U+3000）之后的内容**——
     想让全名显示出来，就别在名字中间放空格。
 
 ##### `categoryText`（Key 13，string）
@@ -2247,15 +2247,15 @@ cutout消去
 "categoryText": "wear"
 ```
 
-- **填写**：`MPN` 枚举名字符串。解析走 `Parse.TryParse<MPN>`（`Menu.cs:194`），
-  **大小写不敏感**（`Parse.cs:223-245` 先 `Enum.TryParse`，失败再按小写逐个比对枚举名）。
+- **填写**：`MPN` 枚举名字符串。解析走 `Parse.TryParse<MPN>`，
+  **大小写不敏感**（先 `Enum.TryParse`，失败再按小写逐个比对枚举名）。
 - **填错的后果**：解析失败 → `category` 落到 `null_mpn`（0），菜单不会出现在任何分类里。
 - **作用**【证实】：
-  - 编辑列表按 `category` 分组 / 过滤（`MaidEditManager.cs:122,325`、`MenuPanelFilterController.cs:42`）；
-  - **运行时作为默认 SlotID**：`additem`、`delitem` 等命令省略槽位参数时用它（`PartsMenuManager.cs:250`）；
+  - 编辑列表按 `category` 分组 / 过滤；
+  - **运行时作为默认 SlotID**：`additem`、`delitem` 等命令省略槽位参数时用它；
   - 决定本地化 Term 前缀（见上）；
-  - `MPN.set_maidwear ~ MPN.set_face` 区间会被判定为「套装数据」（`Menu.isSetData`，`Menu.cs:58-65`）；
-  - `腹揺れ対応` 未指定时，按 `category` 查默认表（`Harayure.HaraYureDefaultAvailableMPNArray`，`Harayure.cs:546+`）。
+  - `MPN.set_maidwear ~ MPN.set_face` 区间会被判定为「套装数据」；
+  - `腹揺れ対応` 未指定时，按 `category` 查默认表。
 
 ##### `infoText`（Key 6，string）
 
@@ -2264,9 +2264,8 @@ cutout消去
 ```
 
 - **填写**：任意字符串。**换行直接写 `\n`**——旧版文本格式里的 `《改行》` 是编译期替换的
-  （`PartsMenuManager.cs:79`，且该路径已弃用），字段里存的应该已经是真正的换行符。
-- **作用**【证实】：编辑界面信息面板显示；本地化 Term 路径 `<category>/<文件名>|info`
-  （`Menu.cs:36-47`、`Menu.GetInfoTextTranslation`，`Menu.cs:169-182`）。
+  （且该路径已弃用），字段里存的应该已经是真正的换行符。
+- **作用**【证实】：编辑界面信息面板显示；本地化 Term 路径 `<category>/<文件名>|info`。
 
 ##### `icon` / `icons` → `iconFileName`（Key 5，string）
 
@@ -2274,13 +2273,12 @@ cutout消去
 "iconFileName": "_i_skinhi008"
 ```
 
-- **填写**：**去掉扩展名、转小写**。两个命令写同一字段【旧版路径：`PartsMenuManager.cs:142-147`
-  用 `Path.GetFileNameWithoutExtension(...).ToLower()`】。
-- **为什么不带扩展名**【证实】：加载时 `EditIconManager.LoadSprite` 会**先自动拼 `.tex` 再试**
-  （`EditIconManager.cs:116`：`LoadAsset<Sprite>(fileName + ".tex", ...)`），失败才用原名，
-  再失败才尝试从 Texture2D 造 Sprite，最后打 `画像[xxx]の読み込みに失敗しました` 警告
-  （`EditIconManager.cs:110-131`）。所以填 `xxx.tex` 会先去找 `xxx.tex.tex`，白白多一次失败。
-- **作用**：编辑界面道具按钮图标（`EditIconManager.GetPartsIconSprite`，`EditIconManager.cs:44-66`）。
+- **填写**：**去掉扩展名、转小写**。两个命令写同一字段【旧版路径：用 `Path.GetFileNameWithoutExtension(...).ToLower()`】。
+- **为什么不带扩展名**【证实】：加载时 `EditIconManager.LoadSprite` 会**先自动拼 `.tex` 再试**，
+  失败才用原名，
+  再失败才尝试从 Texture2D 造 Sprite，最后打 `画像[xxx]の読み込みに失敗しました` 警告。
+  所以填 `xxx.tex` 会先去找 `xxx.tex.tex`，白白多一次失败。
+- **作用**：编辑界面道具按钮图标。
 
 ##### `priority`（Key 7，int）
 
@@ -2290,9 +2288,7 @@ cutout消去
 
 - **填写**：整数，**默认 0**。可为负。
 - **作用**【证实】：编辑列表排序，**数值小的排前面**。各列表控制器统一用 `a.menu.priority - b.menu.priority`
-  作为比较器：`ButtonGroupPanel.cs:154-158`、`PartEditManager.cs:13-15`、
-  `KCES2EditItemListController.cs:139-143`、`AKCES2EditSlotItemListControllerBase.cs:155-159`、
-  `KCES2EditSekimenItemListController.cs:132-136`。相等时再按各自的次级规则（通常是文件名）排。
+  作为比较器。相等时再按各自的次级规则（通常是文件名）排。
 
 ---
 
@@ -2305,17 +2301,15 @@ cutout消去
 ```
 
 - **填写**：`true` 表示「这是一个脱除菜单」。
-  【旧版路径】除了命令本身，**文件名含 `_del`** 也会自动置位（`PartsMenuManager.cs:168`）；
+  【旧版路径】除了命令本身，**文件名含 `_del`** 也会自动置位；
   KCES2 直接填字段即可，不依赖文件名。
 - **作用**【证实】：
-  - 编辑 UI 把 `isDelete` 菜单单独分出来做「脱下」按钮，不混在普通道具里
-    （`ButtonGroupPanel.cs:162-179`、`HairMenuSelectButtonPanel.cs:372`、`HairSlotMenuSelectButtonPanel.cs:121,193` 等）；
+  - 编辑 UI 把 `isDelete` 菜单单独分出来做「脱下」按钮，不混在普通道具里；
   - 执行后清空该槽编辑数据、关闭全部合成层：`editBaseData = null`、所有 `savedTexDatas` 的
-    `useLayer = false`（`PartsMenuManager.cs:1788-1817`）；多重槽（MultiMPN）时对全部子槽生效
-    （`PartsMenuManager.cs:1869-1877`）；
-  - `isGroupLeader` 判定要求 `!isDelete && parentId == 0`（`Menu.cs:49-56`）——脱除菜单不能当分组头；
+    `useLayer = false`；多重槽（MultiMPN）时对全部子槽生效；
+  - `isGroupLeader` 判定要求 `!isDelete && parentId == 0`——脱除菜单不能当分组头；
   - 旧数据（`version < 1003`）转换时，`isDelete` 菜单强制 `targetBodyType = None`、
-    `attribute = WomanReccomend | ManReccomend`（`Menu.cs:206-210`）。
+    `attribute = WomanReccomend | ManReccomend`。
 
 ##### `targetBodyType`（Key 23，int）+ `attribute`（Key 25，ulong）
 
@@ -2324,7 +2318,7 @@ cutout消去
 "attribute": 2
 ```
 
-`Menu.TargetBodyType`（`Menu.cs:605-610`）：
+`Menu.TargetBodyType`：
 
 ```
 None = 0   男女通用
@@ -2333,16 +2327,15 @@ Man = 2    仅男性
 ```
 
 - **填写**：**直接填整数**。旧版文本的 `man_only` / `butler` 是编译期翻译的：
-  `man_only` → `targetBodyType = Man`；`butler` → `attribute |= ManReccomend`
-  【旧版路径：`PartsMenuManager.cs:155-166`】。填字段时不要写这些字符串。
+  `man_only` → `targetBodyType = Man`；`butler` → `attribute |= ManReccomend`。
+  填字段时不要写这些字符串。
 - **作用**【证实】：
-  - `Man` 只在男性编辑中列出、`Woman` 只在女性、`None` 通用
-    （`PartEditManager.cs:253,303`、`FaceManager.cs:296-301`）；
-  - 例外：`genderSeparateMPNList` 里的分类不受此限制（`PartEditManager.cs:253`）；
+  - `Man` 只在男性编辑中列出、`Woman` 只在女性、`None` 通用；
+  - 例外：`genderSeparateMPNList` 里的分类不受此限制；
   - 头部菜单的 `targetBodyType` 还决定整个角色的性别判定与换头初始化脚本名
-    `_i_init_headchange_to_man` / `..._to_maid`（`FaceManager.cs:47,371-405`）；
-  - 运行时随 `additem` 传给 `TBody.AddItem(..., targetBodyType, skirt_phys)`
-    （`PartsMenuManager.cs:709,714`、`TBody.cs:738`），影响模型加载分支。
+    `_i_init_headchange_to_man` / `..._to_maid`；
+  - 运行时随 `additem` 传给 `TBody.AddItem(..., targetBodyType, skirt_phys)`，
+    影响模型加载分支。
 
 ##### `attribute`（Key 25，ulong flags）
 
@@ -2350,23 +2343,21 @@ Man = 2    仅男性
 "attribute": 12
 ```
 
-`Menu.Attribute`（`Menu.cs:612-621`，`[Flags] ulong`）：
+`Menu.Attribute`（`[Flags] ulong`）：
 
 |  值 | 名称                | 作用（消费点）                                                                |
 | --: | ------------------- | ----------------------------------------------------------------------------- |
 |   0 | `None`              | 无                                                                            |
-|   1 | `WomanReccomend`    | 「女性推荐」过滤（`KCESItemFilter.cs:110-113`、`KCES2EditItemFilter.cs:156`） |
-|   2 | `ManReccomend`      | 「男性推荐」过滤（`KCESItemFilter.cs:114-118`）                               |
-|   4 | `ManSuits`          | 男性西装分类过滤（`KCESItemFilter.cs:119-123`）                               |
+|   1 | `WomanReccomend`    | 「女性推荐」过滤                                                              |
+|   2 | `ManReccomend`      | 「男性推荐」过滤                                                              |
+|   4 | `ManSuits`          | 男性西装分类过滤                                                              |
 |   8 | `NoExpressionFace`  | 隐藏表情相关面板/控件                                                         |
-|  16 | `NoMoveTatooHokuro` | 禁用纹身/痣的位置编辑（`EditUnitTransform.cs:257`）                           |
+|  16 | `NoMoveTatooHokuro` | 禁用纹身/痣的位置编辑                                                         |
 
 - **填写**：**按位或后的整数**。例：`ManSuits | NoExpressionFace` = 4 + 8 = **12**。
-- **过滤语义**【证实】：`MenuAttributeFilter` 用的是 `menu.attribute.HasFlag(filterAttribute)`
-  （`KCESItemFilter.cs:96-108`），即**菜单必须包含筛选位才被选中**；筛选条件为 `None` 时全部通过。
-- `NoExpressionFace` 的消费点很多：`CustomViewPanel.cs:549`、`SceneKCES2EditManager.cs:318`、
-  `FaceManager.cs:346`、`SubCategoryPanel.cs:316`、`KCES2EditEyeDelShadowControl.cs:45`、
-  `KCES2EditManFaceEyeDelShadowControl.cs:71`、`KCES2EditManMaidControl.cs:136`。
+- **过滤语义**【证实】：`MenuAttributeFilter` 用的是 `menu.attribute.HasFlag(filterAttribute)`，
+  即**菜单必须包含筛选位才被选中**；筛选条件为 `None` 时全部通过。
+- `NoExpressionFace` 的消费点很多。
 
 ##### `toeLockSlotId`（Key 27，string）
 
@@ -2374,11 +2365,11 @@ Man = 2    仅男性
 "toeLockSlotId": "shoes"
 ```
 
-- **填写**：`TBody.SlotID` 枚举名字符串。解析是 `Enum.Parse(typeof(TBody.SlotID), 值, true)`
-  ——第三参数 `true` 表示**忽略大小写**（`PartsMenuManager.cs:719`）。
+- **填写**：`TBody.SlotID` 枚举名字符串。解析是 `Enum.Parse(typeof(TBody.SlotID), 值, true)`——
+  第三参数 `true` 表示**忽略大小写**。
   **但填错名字会直接抛异常**（`Enum.Parse` 而非 `TryParse`），不留则填 `null` / 空串。
-- **作用**【证实】：执行 `additem` 后注册 `ToeLockCtrl.Add(该槽)`（`PartsMenuManager.cs:717-720`）。
-  该槽可见且动画播放时，脚趾骨骼每帧被锁回初始旋转（`ToeLockCtrl.SelfLateUpdate`，`ToeLockCtrl.cs:68-91`），
+- **作用**【证实】：执行 `additem` 后注册 `ToeLockCtrl.Add(该槽)`。
+  该槽可见且动画播放时，脚趾骨骼每帧被锁回初始旋转，
   用于鞋类防止动画中脚趾穿模。典型值 `"shoes"`。
 
 ##### `isHarayureAvailable`（Key 29，int）
@@ -2387,7 +2378,7 @@ Man = 2    仅男性
 "isHarayureAvailable": 1
 ```
 
-`Menu.HaraYureLimitType`（`Menu.cs:623-628`）：
+`Menu.HaraYureLimitType`：
 
 |  值 | 名称            | 含义                          |
 | --: | --------------- | ----------------------------- |
@@ -2396,11 +2387,11 @@ Man = 2    仅男性
 |   2 | `YureDisable`   | 强制禁止腹部摇摆              |
 
 - **填写**：整数 0/1/2。旧版文本里「写 `腹揺れ対応`（1 参数）＝ YureAvailable」「写 `腹揺れ対応 false`（2 参数）＝ YureDisable」
-  「不写＝None」，这一对应关系由导出侧镜像证实（`ExportCM.WriteHaraYureAvailable`，`ExportCM.cs:1127-1142`）。
+  「不写＝None」，这一对应关系由导出侧镜像证实。
 - **作用**【证实】：`additem` 之后设置该槽 `TBodySkin.IsHarayureAvailable`；
-  为 `None` 时查 `Harayure.HaraYureDefaultAvailableMPNArray`（`Harayure.cs:546+`，含
+  为 `None` 时查 `Harayure.HaraYureDefaultAvailableMPNArray`（含
   `mizugi_top`/`mizugi_buttom`/`bra`/`panz`/`stkg`/`glove`/`shoes`/各 acc 类等），
-  命中则允许、未命中则禁止（`PartsMenuManager.cs:724-749`）。
+  命中则允许、未命中则禁止。
 
 ##### `skirt_phys`（Key 30，int）
 
@@ -2409,10 +2400,10 @@ Man = 2    仅男性
 ```
 
 - **填写**：整数，默认 0。
-- **作用**【证实】：随 `additem` 传入 `TBody.AddItem(..., skirt_phys_ver)`（`PartsMenuManager.cs:709,714`），
-  最终写入 `TBodySkin.m_skirt_phys_ver`（`TBodySkin.cs:230` 附近）。
-  `DynamicBoneMgr` 用 `m_skirt_phys_ver == 2`（或模型名含 `crc2_`）来切换裙子物理处理分支
-  （`DynamicBoneMgr.cs:83`）。即 **2 = 新版裙子物理**。
+- **作用**【证实】：随 `additem` 传入 `TBody.AddItem(..., skirt_phys_ver)`，
+  最终写入 `TBodySkin.m_skirt_phys_ver`。
+  `DynamicBoneMgr` 用 `m_skirt_phys_ver == 2`（或模型名含 `crc2_`）来切换裙子物理处理分支。
+  即 **2 = 新版裙子物理**。
 
 ---
 
@@ -2424,7 +2415,7 @@ Man = 2    仅男性
 "defineTagNames": 2
 ```
 
-`Menu.DEFINE`（`Menu.cs:595-603`，`[Flags] ulong`）：
+`Menu.DEFINE`（`[Flags] ulong`）：
 
 |  值 | 名称          | 含义                             |
 | --: | ------------- | -------------------------------- |
@@ -2436,13 +2427,12 @@ Man = 2    仅男性
 
 - **填写**：按位或的整数。例：`COLOR_MUGEN | COLOR_GRADA` = 2 + 8 = **10**。
 - **作用**【证实】：
-  - **是否启用颜色预设编辑**的开关：条件是 `defineTagNames != NONE` **且不含** `COLOR_MAMA`
-    （`ColorPresetManagerMenuDependent.cs:225`、`EditUnit.cs:22`）；
+  - **是否启用颜色预设编辑**的开关：条件是 `defineTagNames != NONE` **且不含** `COLOR_MAMA`；
   - **同槽多菜单必须一致**才能一起编辑颜色：`slotMenu.menu.defineTagNames != unitList[0].slotMenu.menu.defineTagNames`
-    时判为不可共存（`ColorPresetManagerSlotMpnDependent.cs:27`、`ColorPresetManagerSlotTuft.cs:26`）。
+    时判为不可共存。
 - **与运行时 `ifdef` 的关系**：`ifdef <DEFINE枚举>` 检查的 `defines` **不是**本字段，
-  而是装载调用方传入的 `Menu.DEFINE defines` 参数（`PartsMenuManager.Exec(..., defines)`，
-  `PartsMenuManager.cs:228-233`；判定在 `:331-333`，且 `defines == NONE` 时会 Assert
+  而是装载调用方传入的 `Menu.DEFINE defines` 参数（`PartsMenuManager.Exec(..., defines)`；
+  `defines == NONE` 时会 Assert
   「このメニューには#define定義がありますが実行時の指定がありませんでした。」）。
   本字段只管编辑 UI 是否给你开颜色面板。
 
@@ -2454,7 +2444,7 @@ Man = 2    仅男性
 
 - **填写**：MPN 名字符串。为 `null` 时 `Parse.TryParse` 失败，`colorSet` 保持默认 `null_mpn`（不报错）。
 - **作用**：**【无消费】**——游戏侧除了 `OnBeforeSerialize`/`OnAfterDeserialize` 的存取
-  （`Menu.cs:188,195`）与旧版导入赋值（`PartsMenuManager.cs:151-152`）之外，找不到任何读取点。
+  与旧版导入赋值之外，找不到任何读取点。
   可安全填 `"null_mpn"`。
 
 ##### `colvariFileNameExp`（Key 17，string）
@@ -2465,9 +2455,8 @@ Man = 2    仅男性
 
 - **填写**：**正则表达式**（不是通配符！）。用法【证实】：
   `GetSystemColorPresetMenuList` 把它 `ToLower()` 后 `new Regex(...)`，
-  遍历**全部已装载菜单**用 `regex.IsMatch(menu.fileName)` 筛选，再按 `fileName` 字典序排序
-  （`ColorPresetProvider.cs:187-209`）。
-- **官方写法参考**（`CM3.ColVariFile`，`CM3.cs:354-480`）——注意 `.*.` 这种「点星点」的写法：
+  遍历**全部已装载菜单**用 `regex.IsMatch(menu.fileName)` 筛选，再按 `fileName` 字典序排序。
+- **官方写法参考**——注意 `.*.` 这种「点星点」的写法：
 
   ```
   MPN.hairf      → "crc_haircolor_color_.*._i_.menu"
@@ -2478,12 +2467,11 @@ Man = 2    仅男性
   ```
 
   其中的 `.*.` 在另一处会被 `Regex.Replace(值, "\\.\\*\\.", 变体字符)` 替换成具体变体字母，
-  用来定位「默认变体菜单」（`MaidInfinityColor.cs:45-57`，默认字母 `"a"`，
-  男性 `MPN.skin` 默认 `"d"`，见 `CM3.ColVariDefaultPattern`，`CM3.cs:482-490`）。
+  用来定位「默认变体菜单」（默认字母 `"a"`，
+  男性 `MPN.skin` 默认 `"d"`，见 `CM3.ColVariDefaultPattern`）。
   **所以自定义时要保留 `.*.` 这个占位形状**，否则默认变体定位会失效。
 
-- **作用**：决定该菜单的「系统颜色预设」列表由哪些菜单文件构成
-  （`ColorPresetProvider.LoadSlotPreset` / `LoadPreset`，`ColorPresetProvider.cs:45,60`）。
+- **作用**：决定该菜单的「系统颜色预设」列表由哪些菜单文件构成。
 
 ##### `colvariInfo`（Key 18，`Menu.Colvari` 对象）
 
@@ -2491,20 +2479,17 @@ Man = 2    仅男性
 
 - `colvariInfo` 是**一个对象**（不是数组），其中 `colvariDatas` 才是变体数据列表；
 - 每条 `ColvariData` 描述「把某个颜色/透明度，写到哪些 MPN 的哪一层」；
-- **`mpn` 字段是字符串，支持两种分隔符，语义不同**（`CustomColorPresetColorPack.ParseColvariMpn`，
-  `CustomColorPresetColorPack.cs:199-226`）：
+- **`mpn` 字段是字符串，支持两种分隔符，语义不同**：
   - `"A&B&C"` → UI 侧解析为**三个并列 MPN**，`allowedMpnOverRide = false`；
   - `"A|B"` → UI 侧只取**第一个** `A` 作代表，并置 `allowedMpnOverRide = true`；
-  - **但执行侧（`MaidInfinityColor.Initialize` / `ExecColvari`）只按 `|` 拆分并对每个都 `Enum.Parse`**
-    （`MaidInfinityColor.cs:73-75,152-154`）。
+  - **但执行侧（`MaidInfinityColor.Initialize` / `ExecColvari`）只按 `|` 拆分并对每个都 `Enum.Parse`**。
     因此 **`&` 写法在执行路径上会导致 `Enum.Parse("A&B")` 抛异常**——
     `&` 只适用于纯 UI 颜色预设菜单（那些由 `colvarifile` 正则收集、不被 `Exec` 执行的菜单）。
     自己做衣服的 colvari 时，**用 `|` 或单个 MPN 名**。
-- `layerName` 必须与 `tex`（type=24）/`テクスチャセット合成`（type=31）里写的 **`saveLayerTag` 完全一致**
-  ——两边都是 `prop.savedTexDatas` 字典的键（写入侧 `MaterialMgr.cs:929-940`，读取侧
-  `MaidInfinityColor.cs:119-123,167-170`）。**拼错就静默不生效**。
+- `layerName` 必须与 `tex`（type=24）/`テクスチャセット合成`（type=31）里写的 **`saveLayerTag` 完全一致**——
+  两边都是 `prop.savedTexDatas` 字典的键。**拼错就静默不生效**。
 
-##### `colicon` → `colvariInfo.iconFileName` / `.iconColor`；`colreqdefine` → `colvariInfo.reqDefine`
+##### `colvariInfo.iconFileName` / `colreqdefine` → `colvariInfo.reqDefine`
 
 - `iconFileName`：string（Key 2）；`iconColor`：**`MaidInfinityColor.PartsColor` 结构体**（Key 1，不是颜色名字符串）；
   `reqDefine`：string（Key 3）。
@@ -2527,14 +2512,12 @@ Man = 2    仅男性
 **填写要点**：
 
 1. **hash 值本身可以是任意 ulong**——游戏只做「字典查表」，不校验它是怎么算出来的：
-   运行时 `ulong.Parse(command.args[1])` 后 `menu.preMulTexDatas.TryGetValue(hash, ...)`
-   （`PartsMenuManager.cs:1451-1452,1467,1483,1499`；`TBody.cs:2843,2883`）。
+   运行时 `ulong.Parse(command.args[1])` 后 `menu.preMulTexDatas.TryGetValue(hash, ...)`。
    **唯一硬性要求：字典的 key 必须与 `commandList` 里那条命令 `args[1]` 的数值完全一致**。
-   查不到时打 Assert「menu direct execute hash not found.」（`TBody.cs:2870,2897`）。
-2. `args[0]` 只认 `"hash"` 和 `"del"`；写别的会 Assert「move to precompile command. xxx」
-   （`PartsMenuManager.cs:1456,1472,1488,1504`）——即**这类合成不允许在运行时直接给纹理参数**。
-3. 运行时要求当前 `propBase` 是 `SubProp`（`DebugUtility.Assert.IsNotNull<SubProp>`，
-   `TBody.cs:2842,2881`），即这些合成必须以子槽物品方式挂载。
+   查不到时打 Assert「menu direct execute hash not found.」。
+2. `args[0]` 只认 `"hash"` 和 `"del"`；写别的会 Assert「move to precompile command. xxx」——
+   即**这类合成不允许在运行时直接给纹理参数**。
+3. 运行时要求当前 `propBase` 是 `SubProp`，即这些合成必须以子槽物品方式挂载。
 
 **`PreMulTexDatas` 各字段实际用不用**——这点很关键，因为两条执行路径用的字段并不一样：
 
@@ -2562,13 +2545,12 @@ Man = 2    仅男性
 
 > ⚠️ **两个「填 null 就崩」的坑**：
 >
-> - `preTexCompoTypeStr`：**反序列化时无条件** `Enum.Parse(typeof(GameUtility.SystemMaterial), preTexCompoTypeStr, true)`
->   （`Menu.PreMulTexDatas.OnAfterDeserialize`，`Menu.cs:655-659`）。填 `null` 或非法值 → **加载即抛异常**。
+> - `preTexCompoTypeStr`：**反序列化时无条件** `Enum.Parse(typeof(GameUtility.SystemMaterial), preTexCompoTypeStr, true)`。
+>   填 `null` 或非法值 → **加载即抛异常**。
 >   即使是 `ネイル` 这种运行时不读它的路径也一样，**必须填**（默认 `"Alpha"`）。
-> - `posDefHokuroTatooSlotId`：`MultiMoveTexAdd` 里 `Enum.Parse(typeof(TBody.SlotID), 值)`（**无 ignoreCase**，
->   `TBody.cs:2853`）。7 个 MultiMove 类合成**必须填且大小写严格匹配** `TBody.SlotID` 枚举名（如 `"body"`、`"head"`）。
+> - `posDefHokuroTatooSlotId`：`MultiMoveTexAdd` 里 `Enum.Parse(typeof(TBody.SlotID), 值)`（**无 ignoreCase**）。7 个 MultiMove 类合成**必须填且大小写严格匹配** `TBody.SlotID` 枚举名（如 `"body"`、`"head"`）。
 
-**层号与 tag 是自动的，不用你填**（`TBody.cs:4075-4088`）：
+**层号与 tag 是自动的，不用你填**：
 
 | MultiMoveType | 命令           | tag 前缀（`MultiMoveTagNames`） | 层号（`MultiMoveLayNo`） | 部件色（`MultiMovePartsColor`） |
 | ------------- | -------------- | ------------------------------- | ------------------------ | ------------------------------- |
@@ -2581,7 +2563,7 @@ Man = 2    仅男性
 | 6 BodyHair    | `体毛合成`     | `体毛`                          | 6500                     | `BODY_HAIR`                     |
 | —（指甲）     | `ネイル合成`   | `ネイル`                        | 6000                     | —                               |
 
-运行时会把 `infColParam.tag` 覆写成 `<tag前缀><子槽号>`（`TBody.cs:2850`、`:2891`），所以你填的 `tag` 会被丢弃。
+运行时会把 `infColParam.tag` 覆写成 `<tag前缀><子槽号>`，所以你填的 `tag` 会被丢弃。
 
 **填写示例**（一条痣合成）：
 
@@ -2639,20 +2621,19 @@ Man = 2    仅男性
 "partsVer": ["KCES2", 1000]
 ```
 
-- **序列化形态**：`Tuple<T1,T2>` 由 `TupleFormatter<T1,T2>` 写成**长度为 2 的数组**
-  （`MessagePack/Formatters/TupleFormatter.2.cs:14-18`），即 `[字符串, 整数]`；为 `null` 时写 `nil`。
+- **序列化形态**：`Tuple<T1,T2>` 由 `TupleFormatter<T1,T2>` 写成**长度为 2 的数组**，
+  即 `[字符串, 整数]`；为 `null` 时写 `nil`。
 - **`Item1`（字符串）游戏侧完全不读**，只有 `Item2`（整数）参与判定。
 - **`Item2` 的分档**【证实】：
 
   | 范围           | 判定                                                                                                                      |
   | -------------- | ------------------------------------------------------------------------------------------------------------------------- |
-  | `null` 或 <300 | `partsType = Kces1`（`Menu.cs:95-105`）                                                                                   |
-  | 100 ~ 199      | `hairPartsType = Com3D2OldHair`（`Menu.cs:108-126`）                                                                      |
-  | ≥ 300          | `partsType = Kces2`、`hairPartsType = Kces2Hair`；`KCESItemFilter.IsCrcItem(menu) == true`（`KCESItemFilter.cs:131-134`） |
+  | `null` 或 <300 | `partsType = Kces1`                                                                                                       |
+  | 100 ~ 199      | `hairPartsType = Com3D2OldHair`                                                                                           |
+  | ≥ 300          | `partsType = Kces2`、`hairPartsType = Kces2Hair`；`KCESItemFilter.IsCrcItem(menu) == true`                                |
 
-- 另外发型化妆会比对 `partsVer.Item2` 与导出时记录的材质版本（`HairMakeController.cs:420`、
-  `ExportKCES.cs:122` 写入 `materialPerOriginalMenuVersion`）。
-- ⚠️ `partsVer == null` 时 `HairMakeController.cs:420` 与 `ExportKCES.cs:122` 会直接取 `.Item2` →
+- 另外发型化妆会比对 `partsVer.Item2` 与导出时记录的材质版本（写入 `materialPerOriginalMenuVersion`）。
+- ⚠️ `partsVer == null` 时会直接取 `.Item2` →
   **发型相关菜单不要留 null**。
 - **不要与运行时命令 `ver`（type=26）混淆**：那条在 `commandList` 里，控制 `TBodySkin.m_partsVersion`；
   本字段是菜单级元数据。
@@ -2664,8 +2645,8 @@ Man = 2    仅男性
 ```
 
 - **填写**：`true` = 在编辑道具列表中隐藏。
-- **作用**【证实】：构建编辑列表时过滤条件是 `!menu.isDiff && !menu.hideInEdit`
-  （`MaidEditManager.cs:122,325`）。用于隐藏「只被别的菜单通过 `アイテム` 引用的内部菜单」，
+- **作用**【证实】：构建编辑列表时过滤条件是 `!menu.isDiff && !menu.hideInEdit`。
+  用于隐藏「只被别的菜单通过 `アイテム` 引用的内部菜单」，
   使它们不出现在玩家的道具列表里，但仍可被引用执行。
 
 ##### `exportModelFormTextureName`（Key 28，string）
@@ -2674,24 +2655,23 @@ Man = 2    仅男性
 "exportModelFormTextureName": "crc_hairf001_form.tex"
 ```
 
-- **填写**：纹理文件名，**带扩展名**——加载走 `GameResource.LoadAsset<Texture2D>(menu.exportModelFormTextureName, CatalogType.Parts)`
-  （`HairMakeController.cs:1941`），不会自动补 `.tex`（与 `iconFileName` 相反，别搞混）。
+- **填写**：纹理文件名，**带扩展名**——加载走 `GameResource.LoadAsset<Texture2D>(menu.exportModelFormTextureName, CatalogType.Parts)`，
+  不会自动补 `.tex`（与 `iconFileName` 相反，别搞混）。
 - **作用**【证实】：
-  - 判定该菜单是否支持发型化妆（HairMake）：`!string.IsNullOrEmpty(menu.exportModelFormTextureName)`
-    （`HairMakeController.cs:1870`）；
+  - 判定该菜单是否支持发型化妆（HairMake）：`!string.IsNullOrEmpty(menu.exportModelFormTextureName)`；
   - 导出形态模型时作为形态遮罩纹理读取，读不到就报
-    `menu名[...]アイテム名[...]のマスクテクスチャー[...]が読み込めませんでした`（`HairMakeController.cs:1941-1944`）。
+    `menu名[...]アイテム名[...]のマスクテクスチャー[...]が読み込めませんでした`。
 
 ##### `メニューフォルダ` 与 `filter` —— 两个「填了也没用」的命令
 
 | 命令               | KCES2 中的状态                                                                                                                                                                                  |
 | ------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `メニューフォルダ` | `Menu` 对象**没有对应字段**。旧版编译器用它做资源定位与必填校验，KCES2 里无处安放，**无需填写**。                                                                                               |
-| `filter`           | 同样**没有字段、没有消费点**。注意它与 `.partsfilter` 文件系统（`PartsFilterRuleSet`，`BasePartsManager.cs:302-334`）**是两回事**——后者是独立的资源过滤机制，不由 menu 字段驱动。**无需填写**。 |
+| `filter`           | 同样**没有字段、没有消费点**。注意它与 `.partsfilter` 文件系统**是两回事**——后者是独立的资源过滤机制，不由 menu 字段驱动。**无需填写**。                                                        |
 
 ### 2.6 复杂结构定义
 
-#### `Menu.Colvari`（`Menu.cs:719-809`）
+#### `Menu.Colvari`
 
 | Key | 字段           | 类型                           | 说明                     |
 | :-: | -------------- | ------------------------------ | ------------------------ |
@@ -2701,7 +2681,7 @@ Man = 2    仅男性
 |  3  | `reqDefine`    | string                         | 【无消费】               |
 |  4  | `colvariDatas` | `List<Colvari.ColvariData>`    | **实际起作用的变体数据** |
 
-#### `Menu.Colvari.ColvariData`（`Menu.cs:743-808`）
+#### `Menu.Colvari.ColvariData`
 
 | Key | 字段                      | 类型                                    | 填写说明                                                                                                          |
 | :-: | ------------------------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------------------- |
@@ -2710,42 +2690,42 @@ Man = 2    仅男性
 |  2  | `layerName`               | string                                  | **必须等于 tex/合成命令里的 `saveLayerTag`**                                                                      |
 |  3  | `colorType`               | `InfColData.COLOR_TYPE`（int）          | `0`=NONE `1`=INF_COLOR `2`=PART_COLOR `3`=GRADA_COLOR                                                             |
 |  4  | `maskData`                | `TexLay.MaskData[]`                     | 遮罩开关数组                                                                                                      |
-|  5  | `alpha`                   | float                                   | 写入 `savedTexData.savedMulAlpha`（`MaidInfinityColor.cs:115,198`）                                               |
+|  5  | `alpha`                   | float                                   | 写入 `savedTexData.savedMulAlpha`                                                                                 |
 |  6  | `colData`                 | `MaidInfinityColor.PartsColor`          | `colorType == INF_COLOR` 时生效                                                                                   |
 |  7  | `partColDefs`             | `List<InfinityColorTexMgr2.PartColDef>` | `colorType == PART_COLOR` 时生效                                                                                  |
 |  8  | `gradaColDef`             | `InfinityColorTexMgr2.GradaColDef`      | `colorType == GRADA_COLOR` 时生效                                                                                 |
 |  9  | `mamaFileName`            | string                                  | 【无消费】                                                                                                        |
-| 10  | `colorTypeSub`            | `InfColData.COLOR_TYPE`（int）          | `GRADA_COLOR` 且此项 = `INF_COLOR(1)` 时 → `gradaIsMugen = true`（`MaidInfinityColor.cs:102`、`Menu.cs:754-761`） |
+| 10  | `colorTypeSub`            | `InfColData.COLOR_TYPE`（int）          | `GRADA_COLOR` 且此项 = `INF_COLOR(1)` 时 → `gradaIsMugen = true` |
 | 11  | `useType`                 | `UseType`（byte flags）                 | `1`=ALPHA `2`=COLOR，可组合 → `3` = 同时生效                                                                      |
-| 12  | `saveInfColDataLinkLayer` | string                                  | 非 null 时**复用另一层的 `savedInfColData`**（`MaidInfinityColor.cs:82-85`）                                      |
-| 13  | `viewName`                | string                                  | UI 显示名，会走本地化 `SceneEditUI/DetailSettingSlider/<viewName>`（`ColorAlphaSliderManager.cs:40`）             |
+| 12  | `saveInfColDataLinkLayer` | string                                  | 非 null 时**复用另一层的 `savedInfColData`**                                                                      |
+| 13  | `viewName`                | string                                  | UI 显示名，会走本地化 `SceneEditUI/DetailSettingSlider/<viewName>`                                                |
 
-> `useType` 的作用【证实】：只有含 `COLOR(2)` 才写颜色，只有含 `ALPHA(1)` 才写 alpha
-> （`MaidInfinityColor.cs:79,113,173,196`）。UI 侧据此把颜色包分成
-> `ColorAndAlpha` / `OnlyColor` / `OnlyAlpha` 三型（`CustomColorPresetColorPack.cs:102-109`）。
+> `useType` 的作用【证实】：只有含 `COLOR(2)` 才写颜色，只有含 `ALPHA(1)` 才写 alpha。
+> UI 侧据此把颜色包分成
+> `ColorAndAlpha` / `OnlyColor` / `OnlyAlpha` 三型。
 
 #### `Menu.PreMulTexDatas`
 
 字段表见 2.5-D。
 
-#### `Menu.HairMake`（`Menu.cs:811-852`，**无对应编译时命令**）
+#### `Menu.HairMake`（**无对应编译时命令**）
 
 | Key | 字段                              | 类型     | 说明                                               |
 | :-: | --------------------------------- | -------- | -------------------------------------------------- |
 |  0  | `version`                         | int      | 填 **1001**                                        |
 |  1  | `exportedGuid`                    | string   | 导出源 GUID                                        |
-|  2  | `exporedHairBuildVer`             | int      | 导出时写 `13600`（`ExportKCES.cs:368`）            |
+|  2  | `exporedHairBuildVer`             | int      | 导出时写 `13600`                                   |
 |  3  | `exporedHairGameVer`              | int      | `Product.GameVersion`                              |
 |  4  | `suspendedSaveFileName`           | string   | version ≤1000 时会被迁移到下一字段                 |
 |  5  | `materialPerOriginalMenuFileName` | string[] | 各材质来源菜单文件名                               |
-|  6  | `materialPerOriginalMenuVersion`  | int[]    | 对应菜单的 `partsVer.Item2`（`ExportKCES.cs:122`） |
+|  6  | `materialPerOriginalMenuVersion`  | int[]    | 对应菜单的 `partsVer.Item2`                        |
 
-- 由发型化妆导出流程整体写入（`ExportKCES.cs:366-374`），**手写菜单不要填**（填 `null`）。
-- `menu.isImportedHair` 就是判断 `hairMake != null`（`Menu.cs:138-145`）。
+- 由发型化妆导出流程整体写入，**手写菜单不要填**（填 `null`）。
+- `menu.isImportedHair` 就是判断 `hairMake != null`。
 
 #### 被引用的公共结构
 
-**`MaidInfinityColor.PartsColor`**（struct，`MaidInfinityColor.cs:459-628`）——HSL 颜色：
+**`MaidInfinityColor.PartsColor`**（struct）——HSL 颜色：
 
 | Key | 字段                  | 对应 HSL 文本参数  |
 | :-: | --------------------- | ------------------ |
@@ -2763,11 +2743,11 @@ Man = 2    仅男性
 > `m_grada`（`PartsColor[]`）标了 `[IgnoreMember]`，**渐变分段实际存在 `m_gradaBytes` 里**：
 > `OnBeforeSerialize` 把 `m_grada` 用 `BinaryWriter` 打包成字节（先写 `int` 段数，
 > 每段依次写 9 个 `int`：Hue/Chroma/Brightness/Contrast/ShadowRate/ShadowHue/ShadowChroma/
-> ShadowBrightness/ShadowContrast），`OnAfterDeserialize` 再解包并把 `m_gradaBytes` 置 null
-> （`MaidInfinityColor.cs:502-524,540-591`）。手工构造渐变时必须自己拼这段二进制。
+> ShadowBrightness/ShadowContrast），`OnAfterDeserialize` 再解包并把 `m_gradaBytes` 置 null。
+> 手工构造渐变时必须自己拼这段二进制。
 > `m_bUse` 也是 `[IgnoreMember]`，不参与序列化。
 
-**`TexLay.InfColorParam`**（`TexLay.cs:129-167`）：
+**`TexLay.InfColorParam`**：
 
 | Key | 字段                       | 类型                                   | 说明                         |
 | :-: | -------------------------- | -------------------------------------- | ---------------------------- |
@@ -2783,20 +2763,20 @@ Man = 2    仅男性
 |  9  | `idTexIsRGB`               | bool                                   | ID 纹理按 RGB 通道解释       |
 | 10  | `gradaIsMugen`             | bool                                   | 渐变退化为单色               |
 
-**`TexLay.MaskParam`**（`TexLay.cs:185-205`）：
+**`TexLay.MaskParam`**：
 
 | Key | 字段                | 类型         | 说明                                                                         |
 | :-: | ------------------- | ------------ | ---------------------------------------------------------------------------- |
 |  0  | `maskData`          | `MaskData[]` | 各遮罩开关                                                                   |
 |  1  | `maskTexName`       | string       | 遮罩纹理名                                                                   |
-|  2  | `maskRanges`        | Vector4[]    | 各遮罩范围，传给 shader 的 `_MaskRange`（`InfinityColorTexMgr2.cs:481,545`） |
-|  3  | `linkMaskName`      | string       | 非空时**复用该层的 `savedMaskData`**（`MaterialMgr.cs:966-969`）             |
+|  2  | `maskRanges`        | Vector4[]    | 各遮罩范围，传给 shader 的 `_MaskRange`                                      |
+|  3  | `linkMaskName`      | string       | 非空时**复用该层的 `savedMaskData`**                                         |
 |  4  | `linkMaskNo`        | int          |                                                                              |
-|  5  | `shareRtTargetPart` | string       | 非空时与该部件共享 RenderTexture（`InfinityColorTexMgr2.cs:126-128`）        |
+|  5  | `shareRtTargetPart` | string       | 非空时与该部件共享 RenderTexture                                             |
 
-**`TexLay.MaskData`**（`TexLay.cs:169-183`）：`Key(0) name`（string）、`Key(1) mask`（bool，`true`＝遮住）。
+**`TexLay.MaskData`**：`Key(0) name`（string）、`Key(1) mask`（bool，`true`＝遮住）。
 
-**`TexLay.TransTexData`**（`TexLay.cs:38-127`）：
+**`TexLay.TransTexData`**：
 
 | Key | 字段           | 类型           | 默认               |
 | :-: | -------------- | -------------- | ------------------ |
@@ -2807,23 +2787,22 @@ Man = 2    仅男性
 |  4  | `srcTexPixcel` | Vector2Int     | (0,0)              |
 |  5  | `defTrans`     | `TransTexData` | 复位用的初始值副本 |
 
-> Unity 向量都序列化为**数组**：`Vector2`→`[x,y]`、`Vector4`→`[x,y,z,w]`、`Vector2Int`→`[x,y]`
-> （`MessagePack/Unity/Vector2Formatter.cs:9-14` 等）。
+> Unity 向量都序列化为**数组**：`Vector2`→`[x,y]`、`Vector4`→`[x,y,z,w]`、`Vector2Int`→`[x,y]`。
 
-**`InfinityColorTexMgr2.PartColDef`**（`InfinityColorTexMgr2.cs:676-724`）：
+**`InfinityColorTexMgr2.PartColDef`**：
 `Key(0) part_name`（string）、`Key(1) multi_col`（`PartsColor`）、`Key(2) patternScale`（Vector2，默认 (1,1)）、
 `Key(3) patternRot`（float）。
 
-**`InfinityColorTexMgr2.GradaColDef`**（`InfinityColorTexMgr2.cs:726-828`）：
+**`InfinityColorTexMgr2.GradaColDef`**：
 `Key(0) notUse`（string）、`Key(1) gradaNum`（int）、`Key(2) gradaRates`（float[]）、
 `Key(3) gradaRateRanges`（Vector4[]）、`Key(4) multi_col`（`PartsColor`，渐变分段放在它的 `m_grada`）。
-渐变点数上限 `GRADA_POINT_MAX = 12`（`InfinityColorTexMgr2.cs:620`）。
+渐变点数上限 `GRADA_POINT_MAX = 12`。
 
-**`InfinityColorTexMgr2.InfColData`**（`InfinityColorTexMgr2.cs:830-924`）：
+**`InfinityColorTexMgr2.InfColData`**：
 `Key(0) isIndependenceMultiColor`、`Key(1) infColType`、`Key(2) partsColorType`（默认 `NONE(-1)`）、
 `Key(3) colData`、`Key(4) partColDefs`、`Key(5) gradaColDef`、`Key(6) gradaIsMugen`。
 
-`InfColData.COLOR_TYPE`（`InfinityColorTexMgr2.cs:917-923`）：`NONE=0, INF_COLOR=1, PART_COLOR=2, GRADA_COLOR=3`。
+`InfColData.COLOR_TYPE`：`NONE=0, INF_COLOR=1, PART_COLOR=2, GRADA_COLOR=3`。
 
 ### 2.7 不由编译时命令产生、但必须填对的字段
 
@@ -2835,12 +2814,12 @@ Man = 2    仅男性
 "version": 1005
 ```
 
-- `Menu.FixVersion = 1005`（`Menu.cs:14-21`）。
-- ⚠️ **陷阱**：`OnAfterDeserialize` 里 `if (this.version < 1003) this.ConvertToCRES2Format();`
-  （`Menu.cs:197-200`）。该转换会**无条件覆写你填的 `targetBodyType` 和 `attribute`**：
+- `Menu.FixVersion = 1005`。
+- ⚠️ **陷阱**：`OnAfterDeserialize` 里 `if (this.version < 1003) this.ConvertToCRES2Format();`。
+  该转换会**无条件覆写你填的 `targetBodyType` 和 `attribute`**：
   - `isDelete` 为真 → `targetBodyType = None`、`attribute = WomanReccomend | ManReccomend`；
   - 否则查 `PartsMenuManager.oldVersionMenuDefaultSettings[category]`，查不到就报
-    `MPN[xxx]のCRES2変換データがありません`（`Menu.cs:203-227`）。
+    `MPN[xxx]のCRES2変換データがありません`。
 - 所以**填小于 1003 的版本号 = 你设的性别/属性会被静默丢弃**。
 
 ##### `id`（Key 2）—— **文件名的 FNV-1a 64 位哈希**
@@ -2853,32 +2832,30 @@ Man = 2    仅男性
 （KCES MOD EDITOR 会帮你算的）
 
 - **算法**：FNV-1a 64 位，offset basis `14695981039346656037`，prime `1099511628211`，
-  逐 UTF-8 字节 `hash ^= byte; hash *= prime`（`AssetManager.GetHash`，`AssetManager.cs:90-112`）。
+  逐 UTF-8 字节 `hash ^= byte; hash *= prime`。
 - **输入**：**全小写的文件名，且包含 `.menu` 扩展名**。
-- **为什么必须对**：菜单注册表以 `id` 为键（`BasePartsManager.cs:125`：`assetList_[t.id] = t`），
-  而查找走 `GetMenu(name)` → `AssetManager.GetHashIgnoreCase(name)`（会自动补 `.menu`，
-  `PartsMenuManager.cs:180-186`）。`GetHashIgnoreCase` 是同一个 FNV-1a，只是先把字符转小写
-  （`AssetManager.cs:124-163`）。**`id` 对不上，任何 `アイテム`/`リソース参照`/预设引用都找不到这个菜单。**
+- **为什么必须对**：菜单注册表以 `id` 为键，
+  而查找走 `GetMenu(name)` → `AssetManager.GetHashIgnoreCase(name)`（会自动补 `.menu`）。`GetHashIgnoreCase` 是同一个 FNV-1a，只是先把字符转小写。
+  **`id` 对不上，任何 `アイテム`/`リソース参照`/预设引用都找不到这个菜单。**
 - 上例已实测验证：`FNV1a64("cm3d2_skinhi008.menu") = 41100326004452930`，与真实数据一致。
 - 同理，`parentId`（Key 8）= 父菜单文件名的同一哈希；没有父菜单填 `0`。
-  父菜单文件名的推导规则（`_z<编号>` 系列）见 `Menu.GetParentMenuFileName`（`Menu.cs:320-366`），
+  父菜单文件名的推导规则（`_z<编号>` 系列）见 `Menu.GetParentMenuFileName`，
   且只对 `MPN.wear ~ MPN.accAcc24` 与 `MPN.set_maidwear ~ MPN.set_face` 区间生效。
 
 ##### `fileName`（Key 3）
 
-- **全小写、含 `.menu`**。它同时决定本地化 Term 路径（取不含扩展名的部分，`Menu.cs:30,43`）
+- **全小写、含 `.menu`**。它同时决定本地化 Term 路径（取不含扩展名的部分）
   与 `id`/`parentId` 的哈希输入。
 
 ##### `guid`（Key 1）
 
-- ulong。除发型化妆导出会写 `AssetManager.GetHashIgnoreCase(hairMake.exportedGuid)`（`ExportKCES.cs:375`）外，
+- ulong。除发型化妆导出会写 `AssetManager.GetHashIgnoreCase(hairMake.exportedGuid)` 外，
   **游戏侧找不到其它读取点**（`IPartsData.guid` 只是接口暴露，无实际消费者）。
 
 ##### `isDiff`（Key 10，bool）
 
-- **作用**【证实】：与 `hideInEdit` 同等待遇——`!menu.isDiff && !menu.hideInEdit` 才进编辑列表
-  （`MaidEditManager.cs:122,325`）。
-- 【旧版路径】文件名含 `_zurashi` / `_mekure` 会自动置位（`PartsMenuManager.cs:167`）；KCES2 直接填字段。
+- **作用**【证实】：与 `hideInEdit` 同等待遇——`!menu.isDiff && !menu.hideInEdit` 才进编辑列表。
+- 【旧版路径】文件名含 `_zurashi` / `_mekure` 会自动置位；KCES2 直接填字段。
 
 ##### `srcFileHashCRC32`（Key 19）/ `defineFirst`（Key 20）/ `isMan`（Key 9）/ `isRecommendMan`（Key 22）
 
@@ -3643,13 +3620,13 @@ None=0, YureAvailable=1, YureDisable=2
 > 几处值得注意的地方：
 >
 > - `id` = `41100326004452930` 正是 `FNV1a64("cm3d2_skinhi008.menu")`（已实测对拍），印证 2.7 的 `id` 计算规则；
-> - `iconFileName` 为 `_i_skinhi008`，**不带 `.tex`**——加载时游戏会自动补（`EditIconManager.cs:116`）；
-> - `partsVer` 为 `null` → 该菜单被判定为 **KCES1 分代**（`Menu.partsType`，`Menu.cs:95-105`）；
+> - `iconFileName` 为 `_i_skinhi008`，**不带 `.tex`**——加载时游戏会自动补；
+> - `partsVer` 为 `null` → 该菜单被判定为 **KCES1 分代**；
 > - `defineTagNames` = 2（`COLOR_MUGEN`），所以这个菜单在编辑器里能开无限色预设面板；
 > - `version` 为 1005（`Menu.FixVersion`）。低于 1003 的旧数据反序列化时会经 `ConvertToCRES2Format`
->   **覆写** `targetBodyType` / `attribute`（`Menu.cs:197-227`），见 2.7 的版本陷阱；
+>   **覆写** `targetBodyType` / `attribute`，见 2.7 的版本陷阱；
 > - `categoryText` / `colorSetText` 是 `category` / `colorSet` 的实际序列化载体，
->   反序列化后会被解析回枚举并清空（`Menu.cs:184-201`）；
+>   反序列化后会被解析回枚举并清空；
 > - `commandList` 里 `type` 为 `Menu.Command.Type` 枚举的整数值（对照第一章映射表：42 = `partcolordef`，24 = `tex`）。
 
 ---
