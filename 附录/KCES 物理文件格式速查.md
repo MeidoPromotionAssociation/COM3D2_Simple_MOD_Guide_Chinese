@@ -1,6 +1,6 @@
 # KCES 物理文件格式速查
 
-本文是 KCES / KCES2 / COM3D2.5 里那一堆物理配置文件的格式参考，配合《第 7 课，在 KCES2 中使用 Magica Cloth 2 让物体有物理效果》阅读。
+本文是 KCES / KCES2 / COM3D2.5 里那一堆物理配置文件的格式参考
 
 信息来自游戏代码（COM3D2 2.49.x、COM3D2.5 3.49.x、KCES 1.34.5、KCES2 1.35.1 / 1.36.0）和 [MeidoSerialization](https://github.com/MeidoPromotionAssociation/MeidoSerialization) 的实现，随版本可能变化。
 
